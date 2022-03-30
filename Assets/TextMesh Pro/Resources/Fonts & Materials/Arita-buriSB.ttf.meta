@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: f486aa4c0b0a06744bf1339f610d8a11
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Arita-buri(TTF)
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 16fb19168a586244ca82e9797040850a, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
