@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,24 +9,12 @@ public class PoolManager : Singleton<PoolManager>
     {
         if (obj != null)
         {
+            GameObject copy = null;
             if (pools.ContainsKey(obj))
             {
-                if(pools[obj].FindAll((GameObject x) => !x.activeSelf).Count > 0)
+                if (pools[obj].FindAll((GameObject x) => !x.activeSelf).Count > 0)
                 {
-                    GameObject copy = pools[obj].Find((GameObject x) => !x.activeSelf);
-                    copy.SetActive(true);
-                    if(hidetime > 0)
-                    {
-                        AudoDestruct destruct = copy.AddComponent<AudoDestruct>();
-                        destruct.active = true;
-                        destruct.duration = hidetime;
-                    }
-                    return copy;
-                }
-                else
-                {
-                    GameObject copy = GameObject.Instantiate<GameObject>(obj);
-                    pools[obj].Add(copy);
+                    copy = pools[obj].Find((GameObject x) => !x.activeSelf);
                     copy.SetActive(true);
                     if (hidetime > 0)
                     {
@@ -41,17 +28,17 @@ public class PoolManager : Singleton<PoolManager>
             else
             {
                 pools.Add(obj, new List<GameObject>());
-                GameObject copy = GameObject.Instantiate<GameObject>(obj);
-                pools[obj].Add(copy);
-                copy.SetActive(true);
-                if (hidetime > 0)
-                {
-                    AudoDestruct destruct = copy.AddComponent<AudoDestruct>();
-                    destruct.active = true;
-                    destruct.duration = hidetime;
-                }
-                return copy;
             }
+            copy = GameObject.Instantiate<GameObject>(obj);
+            pools[obj].Add(copy);
+            copy.SetActive(true);
+            if (hidetime > 0)
+            {
+                AudoDestruct destruct = copy.AddComponent<AudoDestruct>();
+                destruct.active = true;
+                destruct.duration = hidetime;
+            }
+            return copy;
         }
         else
         {
