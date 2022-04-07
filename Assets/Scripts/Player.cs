@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private GameObject sprite;
+    [SerializeField]
+    private GameObject dashsprite;
     private Rigidbody2D rigid;
 
     public Rigidbody2D Rigid
@@ -27,6 +29,12 @@ public class Player : MonoBehaviour
     public int maxhp;
     public int maxdash;
     public int dash;
+    public int dashcooltime;
+    public List<Item> inventories = new List<Item>(15);
+    Vector2 dashing;
+    float dashing2;
+    bool dashjansang;
+    float dashcooldown;
     int jump;
     public int jumpadd;
 
@@ -35,7 +43,7 @@ public class Player : MonoBehaviour
         jump = jumpmax;
     }
 
-    void Moving()
+    void CheckMoving(float deltaTime)
     {
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
@@ -70,13 +78,13 @@ public class Player : MonoBehaviour
         if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) && jump != 0)
         {
             jump--;
-            jumpadd = 200;
+            jumpadd = 100;
             Rigid.velocity = new Vector2(Rigid.velocity.x, 0);
             Rigid.AddForce(Vector3.up * 600 * jumpspeed);
         }
         if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.Space)) && jumpadd > 0)
         {
-            Rigid.AddForce(Vector3.up  * jumpspeed);
+            Rigid.AddForce(Vector3.up  * jumpspeed * 4);
             jumpadd--;
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.Space))
@@ -99,18 +107,63 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Dashing()
+    void CheckDashing(float deltaTime)
     {
-        if (Input.GetMouseButtonDown(1))
+        if (dashcooldown >= dashcooltime)
         {
+            dash++;
+            dashcooldown = 0;
+            GameManager.Instance.DashChange();
         }
+        else if (dash < maxdash)
+        {
+            dashcooldown += deltaTime;
+        }
+        if(dashing2 > 0)
+        {
+            dashing2 -= deltaTime;
+            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, dashing, 1f, LayerMask.GetMask("Platform"));
+            if(rayhit.collider == null)
+            {
+                Rigid.velocity = new Vector2(0, 0);
+                transform.Translate(dashing *deltaTime / 1.5f);
+                if (dashing2 <= 0)
+                {
+                    Rigid.AddForce(dashing * 5);
+                }
+                if (dashing2 < 0.05f && !dashjansang)
+                {
+                    DashJansang();
+                    dashjansang = true;
+                }
+            }
+        }
+        if (Input.GetMouseButtonDown(1) && dash > 0)
+        {
+            Rigid.velocity = new Vector2(0, 0);
+            Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position + new Vector3(0,0,10);
+            Vector3 vector2 = vector.normalized * Mathf.Rad2Deg;
+            dashing = vector2;
+            dashing2 = 0.1f;
+            dashjansang = false;
+            DashJansang();
+            dash--;
+            GameManager.Instance.DashChange();
+        }
+    }
+    
+    void DashJansang()
+    {
+        GameObject obj = PoolManager.Instance.Init(dashsprite, 0.2f);
+        obj.transform.position = sprite.transform.position;
     }
 
     void Update()
     {
+        float time = Time.deltaTime;
         MouseMoving();
         CheckJumping();
-        Moving();
-        Dashing();
+        CheckMoving(time);
+        CheckDashing(time);
     }
 }

@@ -30,8 +30,7 @@ public class GameManager : Singleton<GameManager>
 	Image Dashbarright;
 	[SerializeField]
 	List<Image> Dashbars;
-	[SerializeField]
-	Sprite[] Dashbarsprites;
+
 	int dashcount;
 
 	[Header("[Player]")]
@@ -45,7 +44,6 @@ public class GameManager : Singleton<GameManager>
 	{
 		cursor.transform.position = Input.mousePosition;
 		HealthChange();
-		DashChange();
 	}
 
 	public void DashChange()
