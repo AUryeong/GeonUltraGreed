@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     private GameObject sprite;
     [SerializeField]
     private GameObject dashsprite;
+    [SerializeField]
+    private PlayerInven inventoryui;
     private Rigidbody2D rigid;
 
     public Rigidbody2D Rigid
@@ -30,12 +32,12 @@ public class Player : MonoBehaviour
     public int maxdash;
     public int dash;
     public int dashcooltime;
-    public List<Item> inventories = new List<Item>(15);
     Vector2 dashing;
     float dashing2;
     bool dashjansang;
     float dashcooldown;
     int jump;
+    bool acting;
     public int jumpadd;
 
     void Start()
@@ -133,7 +135,8 @@ public class Player : MonoBehaviour
                 }
                 if (dashing2 < 0.05f && !dashjansang)
                 {
-                    DashJansang();
+                    GameObject obj = PoolManager.Instance.Init(dashsprite, 0.2f);
+                    obj.transform.position = sprite.transform.position;
                     dashjansang = true;
                 }
             }
@@ -146,24 +149,36 @@ public class Player : MonoBehaviour
             dashing = vector2;
             dashing2 = 0.1f;
             dashjansang = false;
-            DashJansang();
+            GameObject obj = PoolManager.Instance.Init(dashsprite, 0.2f);
+            obj.transform.position = sprite.transform.position;
             dash--;
             GameManager.Instance.DashChange();
         }
     }
-    
-    void DashJansang()
-    {
-        GameObject obj = PoolManager.Instance.Init(dashsprite, 0.2f);
-        obj.transform.position = sprite.transform.position;
-    }
 
+    void CheckInventory()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            acting = !inventoryui.gameObject.activeSelf;
+            if (inventoryui.gameObject.activeSelf)
+            {
+            }
+            else
+            {
+            }
+        }
+    }
     void Update()
     {
-        float time = Time.deltaTime;
-        MouseMoving();
-        CheckJumping();
-        CheckMoving(time);
-        CheckDashing(time);
+        if (!acting)
+        {
+            float time = Time.deltaTime;
+            MouseMoving();
+            CheckJumping();
+            CheckMoving(time);
+            CheckDashing(time);
+            CheckInventory();
+        }
     }
 }
