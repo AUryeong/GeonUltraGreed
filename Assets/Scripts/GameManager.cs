@@ -32,18 +32,18 @@ public class GameManager : Singleton<GameManager>
 	List<Image> Dashbars;
 
 	int dashcount;
-
-	[Header("[Player]")]
-	[SerializeField]
 	Player player;
 
 	protected override void Awake()
 	{
+		base.Awake();
+		player = Player.Instance;
+		DashChange();
+		HealthChange();
 	}
 	void Update()
 	{
 		cursor.transform.position = Input.mousePosition;
-		HealthChange();
 	}
 
 	public void DashChange()

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Singleton<Player>
 {
     [SerializeField]
     private GameObject sprite;
@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     private GameObject dashsprite;
     [SerializeField]
     private PlayerInven inventoryui;
+    [SerializeField]
+    private ItemSlot slot;
     private Rigidbody2D rigid;
 
     public Rigidbody2D Rigid
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    [Header("Status")]
     public float speed;
     public float jumpspeed;
     public int jumpmax;
@@ -32,13 +35,16 @@ public class Player : MonoBehaviour
     public int maxdash;
     public int dash;
     public int dashcooltime;
+
+
     Vector2 dashing;
     float dashing2;
     bool dashjansang;
     float dashcooldown;
     int jump;
     bool acting;
-    public int jumpadd;
+    bool jumping;
+    int jumpadd;
 
     void Start()
     {
@@ -54,7 +60,7 @@ public class Player : MonoBehaviour
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.7f), Vector2.right, 0.85f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
-                transform.Translate(Vector3.right * Time.deltaTime * speed / 100 * 6);
+                transform.Translate(Vector3.right * deltaTime * speed / 100 * 6);
             }
         }
         else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
@@ -64,7 +70,7 @@ public class Player : MonoBehaviour
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.7f), Vector2.left, 0.85f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
-                transform.Translate(Vector3.left * Time.deltaTime * speed / 100 * 6);
+                transform.Translate(Vector3.left * deltaTime * speed / 100 * 6);
             }
         }
     }
@@ -77,34 +83,28 @@ public class Player : MonoBehaviour
 
     void CheckJumping()
     {
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) && jump != 0)
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.Space))
         {
-            jump--;
-            jumpadd = 100;
-            Rigid.velocity = new Vector2(Rigid.velocity.x, 0);
-            Rigid.AddForce(Vector3.up * 600 * jumpspeed);
-        }
-        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.Space)) && jumpadd > 0)
-        {
-            Rigid.AddForce(Vector3.up  * jumpspeed * 4);
-            jumpadd--;
-        }
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.Space))
-        {
-            jumpadd = 0;
-        }
-        if (Rigid.velocity.y < 0)
-        {
-            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
-            if (rayhit.collider != null || rayhit2.collider != null || rayhit3.collider != null)
-            {
-                jump = jumpmax;
-            }
-            else if (jump == jumpmax)
+            if (jump != 0 && jumpadd == 0 && !jumping)
             {
                 jump--;
+                jumpadd = 20;
+                jumping = true;
+                Rigid.velocity = new Vector2(Rigid.velocity.x, 0);
+                Rigid.AddForce(Vector3.up * 600 * jumpspeed);
+            }
+            else if (jumpadd > 0)
+            {
+                Rigid.AddForce(Vector3.up * jumpspeed * 10);
+                jumpadd--;
+            }
+        }
+        else
+        {
+            jumping = false;
+            if (jumpadd > 0)
+            {
+                jumpadd = 0;
             }
         }
     }
@@ -128,10 +128,10 @@ public class Player : MonoBehaviour
             if(rayhit.collider == null)
             {
                 Rigid.velocity = new Vector2(0, 0);
-                transform.Translate(dashing *deltaTime / 1.5f);
+                transform.Translate(dashing * deltaTime / 1.5f);
                 if (dashing2 <= 0)
                 {
-                    Rigid.AddForce(dashing * 5);
+                    Rigid.AddForce(new Vector2(dashing.x, dashing.y*10));
                 }
                 if (dashing2 < 0.05f && !dashjansang)
                 {
@@ -160,12 +160,28 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            acting = !inventoryui.gameObject.activeSelf;
-            if (inventoryui.gameObject.activeSelf)
+            //slot.ShowItem(new Item() { ItemText = "ShortSword" });
+        }
+    }
+    void FixedUpdate()
+    {
+        CheckJumping();
+    }
+
+    void CheckJumped()
+    {
+        if (Rigid.velocity.y < 0)
+        {
+            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
+            if (rayhit.collider != null || rayhit2.collider != null || rayhit3.collider != null)
             {
+                jump = jumpmax;
             }
-            else
+            else if (jump == jumpmax)
             {
+                jump--;
             }
         }
     }
@@ -175,10 +191,10 @@ public class Player : MonoBehaviour
         {
             float time = Time.deltaTime;
             MouseMoving();
-            CheckJumping();
             CheckMoving(time);
             CheckDashing(time);
             CheckInventory();
+            CheckJumped();
         }
     }
 }
