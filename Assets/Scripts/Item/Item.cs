@@ -23,6 +23,7 @@ public class StatBonus
 
 public class Item
 {
+    public ItemSlot.Category category = ItemSlot.Category.Inventory;
     public virtual StatBonus GetStat()
     {
         return new StatBonus()
@@ -54,24 +55,4 @@ public class Item
             return "에러에러";
         }
     }
-}
-public class MainWeaponItem : Item
-{
-    public virtual void Attack()
-    {
-
-    }
-}
-
-public class SubWeaponItem : Item
-{
-
-    public virtual void Attack()
-    {
-
-    }
-}
-
-public class AccessoryItem : Item
-{
 }

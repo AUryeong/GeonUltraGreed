@@ -13,6 +13,12 @@ public class GameManager : Singleton<GameManager>
 	[SerializeField]
 	Texture2D invisiblecursor;
 
+	[Header("[UI - Cursor]")]
+	[SerializeField]
+	Sprite uicursor;
+	[SerializeField]
+	Sprite defaultcursor;
+
 	[Header("[UI - HP]")]
 	[SerializeField]
 	Image Hpbar;
@@ -43,7 +49,26 @@ public class GameManager : Singleton<GameManager>
 	}
 	void Update()
 	{
+		CursorChange();
+	}
+
+	void CursorChange()
+	{
 		cursor.transform.position = Input.mousePosition;
+		if(Player.Instance.IsActable())
+		{
+			if (cursor.sprite != defaultcursor)
+			{
+				cursor.sprite = defaultcursor;
+			}
+        }
+        else
+		{
+			if (cursor.sprite != uicursor)
+			{
+				cursor.sprite = uicursor;
+			}
+		}
 	}
 
 	public void DashChange()

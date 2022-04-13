@@ -8,8 +8,7 @@ public class Player : Singleton<Player>
     private GameObject sprite;
     [SerializeField]
     private GameObject dashsprite;
-    [SerializeField]
-    private PlayerInven inventoryui;
+    public PlayerInven Inven;
     [SerializeField]
     private ItemSlot slot;
     private Rigidbody2D rigid;
@@ -36,19 +35,23 @@ public class Player : Singleton<Player>
     public int dash;
     public int dashcooltime;
 
-
+    public Hand hand = Hand.RightHand;
     Vector2 dashing;
     float dashing2;
     bool dashjansang;
     float dashcooldown;
     int jump;
-    bool acting;
     bool jumping;
     int jumpadd;
 
     void Start()
     {
         jump = jumpmax;
+    }
+
+    public bool IsActable()
+    {
+        return !Inven.gameObject.activeSelf;
     }
 
     void CheckMoving(float deltaTime)
@@ -156,16 +159,19 @@ public class Player : Singleton<Player>
         }
     }
 
-    void CheckInventory()
+    void CheckUI()
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            //slot.ShowItem(new Item() { ItemText = "ShortSword" });
+            Inven.gameObject.SetActive(true);
         }
     }
     void FixedUpdate()
     {
-        CheckJumping();
+        if (IsActable())
+        {
+            CheckJumping();
+        }
     }
 
     void CheckJumped()
@@ -187,14 +193,20 @@ public class Player : Singleton<Player>
     }
     void Update()
     {
-        if (!acting)
+        float time = Time.deltaTime;
+        if (IsActable())
         {
-            float time = Time.deltaTime;
             MouseMoving();
             CheckMoving(time);
             CheckDashing(time);
-            CheckInventory();
-            CheckJumped();
+            CheckUI();
         }
+        CheckJumped();
+    }
+
+    public enum Hand
+    {
+        RightHand,
+        LeftHand
     }
 }

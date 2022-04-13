@@ -1,31 +1,56 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
-public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
 {
 
     [SerializeField]
-    protected Sprite selected;
+    Sprite selected;
 
     Sprite gibon;
 
-    void Awake()
+    Image image;
+
+    protected virtual void Awake()
     {
         if(gibon == null)
         {
             gibon = GetComponent<Image>().sprite;
         }
+        if(image == null)
+        {
+            image = GetComponent<Image>();
+        }
+    }
+
+    public virtual void OnPointerUp(PointerEventData data)
+    {
+    }
+
+    public virtual void OnPointerDown(PointerEventData data)
+    {
+    }
+
+    public virtual void OnPointerClick(PointerEventData data)
+    {
+    }
+
+    protected virtual void OnDisable()
+    {
+        image.sprite = gibon;
     }
 
     public virtual void OnPointerEnter(PointerEventData data)
     {
-        GetComponent<Image>().sprite = selected;
+        image.sprite = selected;
     }
     public virtual void OnPointerExit(PointerEventData data)
     {
-        GetComponent<Image>().sprite = gibon;
+        image.sprite = gibon;
     }
 }
