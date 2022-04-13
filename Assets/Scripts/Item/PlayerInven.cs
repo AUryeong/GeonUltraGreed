@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class PlayerInven : MonoBehaviour
 {
     [SerializeField]
     private ItemSlot copy;
+
+    [SerializeField]
+    GameObject[] selectedimages;
 
     [SerializeField]
     GameObject[] gameObjects;
@@ -18,8 +22,15 @@ public class PlayerInven : MonoBehaviour
     public List<ItemSlot> Accessories = new List<ItemSlot>();
     public List<ItemSlot> MainWeapon = new List<ItemSlot>();
     public List<ItemSlot> SubWeapon = new List<ItemSlot>();
-    
 
+    public Hand hand = Hand.LeftHand;
+
+
+
+    public ItemSlot[] GetHands()
+    {
+        return new ItemSlot[] { MainWeapon[(int)hand] , SubWeapon[(int)hand] };
+    }
     public List<ItemSlot> GetAllItemSlots()
     {
         List<ItemSlot> list = new List<ItemSlot>(Inventories);
@@ -41,6 +52,11 @@ public class PlayerInven : MonoBehaviour
         if (SelectedSlot != null)
         {
             SelectedSlot.itemimage.transform.position = Input.mousePosition;
+        }
+        if (!selectedimages[(int)hand].activeSelf)
+        {
+            selectedimages[((int)hand + 1) % 2].SetActive(false);
+            selectedimages[(int)hand].SetActive(true);
         }
     }
 
@@ -164,4 +180,9 @@ public class PlayerInven : MonoBehaviour
         AddItem(new Item() { ItemText = "RingOfSpeed", category = ItemSlot.Category.Accessory });
     }
 
+    public enum Hand
+    {
+        LeftHand,
+        RightHand
+    }
 }

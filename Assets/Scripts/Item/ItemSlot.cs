@@ -35,6 +35,77 @@ public class ItemSlot : UISlot
         get { return Player.Instance.Inven; }
     }
 
+    public override void OnPointerClick(PointerEventData data)
+    {
+        //우클릭 시 자동 장착
+        if(data.button == PointerEventData.InputButton.Right && item != null)
+        {
+            ItemSlot slot = null;
+            if(item.category == Category.MainWeapon)
+            {
+                if (Inven.MainWeapon.Contains(this))
+                {
+                    if (Inven.AddItem(this))
+                    {
+                        SetItem(null);
+                    }
+                    return;
+                }
+                else
+                {
+                    slot = Inven.GetHands()[0];
+                }
+            }
+            else if (item.category == Category.SubWeapon)
+            {
+
+                if (Inven.SubWeapon.Contains(this))
+                {
+                    if (Inven.AddItem(this))
+                    {
+                        SetItem(null);
+                    }
+                    return;
+                }
+                else if (Inven.GetHands()[0].item == null)
+                {
+                    return;
+                }
+                else
+                {
+                    slot = Inven.GetHands()[1];
+                }
+            }
+            else if (item.category == Category.Accessory)
+            {
+                if (Inven.Accessories.Contains(this))
+                {
+                    if (Inven.AddItem(this))
+                    {
+                        SetItem(null);
+                    }
+                    return;
+                }
+                else
+                {
+                    slot = Inven.Accessories.Find((ItemSlot x) => x.item == null);
+                    if (slot == null)
+                    {
+                        slot = Inven.Accessories[0];
+                    }
+                }
+            }
+            Item ATM = item;
+            if (Inven.AddItem(slot, this))
+            {
+                slot.SetItem(ATM);
+                if (ATM == item)
+                {
+                    SetItem(null);
+                }
+            }
+        }
+    }
 
     public override void OnPointerDown(PointerEventData data)
     {
@@ -85,10 +156,6 @@ public class ItemSlot : UISlot
                         {
                             SetItem(null);
                         }
-                    }
-                    else
-                    {
-
                     }
                 }
             }

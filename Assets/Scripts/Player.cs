@@ -34,8 +34,6 @@ public class Player : Singleton<Player>
     public int maxdash;
     public int dash;
     public int dashcooltime;
-
-    public Hand hand = Hand.RightHand;
     Vector2 dashing;
     float dashing2;
     bool dashjansang;
@@ -82,6 +80,22 @@ public class Player : Singleton<Player>
     {
         Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition) - sprite.transform.position;
         sprite.transform.localScale = new Vector3((vector.x < 0) ? -1 : 1, 1, 1);
+    }
+
+    void CheckHandChanged()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Inven.hand = PlayerInven.Hand.LeftHand;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Inven.hand = PlayerInven.Hand.RightHand;
+        }
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+        {
+            Inven.hand = (PlayerInven.Hand)(((int)Inven.hand + 1) % 2);
+        }
     }
 
     void CheckJumping()
@@ -198,6 +212,7 @@ public class Player : Singleton<Player>
         }
         CheckDashed(time);
         CheckJumped();
+        CheckHandChanged();
     }
 
     void CheckDashed(float deltaTime)
@@ -214,9 +229,4 @@ public class Player : Singleton<Player>
         }
     }
 
-    public enum Hand
-    {
-        RightHand,
-        LeftHand
-    }
 }
