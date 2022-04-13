@@ -1746,7 +1746,6 @@ MonoBehaviour:
   maxdash: 3
   dash: 1
   dashcooltime: 1
-  hand: 0
 --- !u!213 &164791146
 Sprite:
   m_ObjectHideFlags: 0
@@ -15322,6 +15321,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   copy: {fileID: 850944445}
+  selectedimages:
+  - {fileID: 143814268}
+  - {fileID: 262121272}
   gameObjects:
   - {fileID: 1114834291}
   - {fileID: 1045793915}
@@ -15353,6 +15355,7 @@ MonoBehaviour:
   Accessories: []
   MainWeapon: []
   SubWeapon: []
+  hand: 0
 --- !u!114 &1746300450
 MonoBehaviour:
   m_ObjectHideFlags: 0
