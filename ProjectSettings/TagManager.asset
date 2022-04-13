@@ -8,13 +8,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Item UI
   - Water
   - UI
-  - 
-  - 
-  - Item UI
   - Base UI
+  - 
+  - Player
+  - Enemy
   - Platform
   - 
   - 

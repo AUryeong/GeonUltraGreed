@@ -30,12 +30,21 @@ public class ItemSlot : UISlot
 
     public Category category = Category.Inventory;
 
+    private PlayerInven Inven
+    {
+        get { return Player.Instance.Inven; }
+    }
+
+
     public override void OnPointerDown(PointerEventData data)
     {
-        if(Player.Instance.Inven.SelectedSlot == null && item != null)
+        if(data.button == PointerEventData.InputButton.Left)
         {
-            gameObject.transform.parent.SetAsLastSibling();
-            Player.Instance.Inven.SelectedSlot = this;
+            if (Inven.SelectedSlot == null && item != null)
+            {
+                gameObject.transform.parent.SetAsLastSibling();
+                Inven.SelectedSlot = this;
+            }
         }
     }
 
@@ -45,35 +54,42 @@ public class ItemSlot : UISlot
     }
     public override void OnPointerUp(PointerEventData data)
     {
-        if (Player.Instance.Inven.SelectedSlot == this)
+        if (data.button == PointerEventData.InputButton.Left)
         {
-            Player.Instance.Inven.SelectedSlot = null;
-            ItemSlot slot = Player.Instance.Inven.GetAllItemSlots().Find((ItemSlot x) => x.select);
-            itemimage.transform.localPosition = Vector3.zero;
-            if (slot != null)
+            if (Inven.SelectedSlot == this)
             {
-                Item item2 = slot.item;
-                if (slot.SetableItem(item))
+                Inven.SelectedSlot = null;
+                ItemSlot slot = Inven.GetAllItemSlots().Find((ItemSlot x) => x.select);
+                itemimage.transform.localPosition = Vector3.zero;
+                if (slot != null)
                 {
-                    if (SetableItem(item2))
+                    Item item2 = slot.item;
+                    Item ATM = item;
+                    if (slot.SetableItem(ATM) && SetableItem(item2))
                     {
-                        slot.SetItem(item);
+                        slot.SetItem(ATM);
                         SetItem(item2);
                     }
-                }
-                else if (item.category == Category.MainWeapon && slot.category == Category.SubWeapon)
-                {
-                    slot.SetItem(item);
-                    SetItem(item2);
-                }
-                else if (item2 != null && Player.Instance.Inven.AddItem(new List<ItemSlot>() { slot , this }))
-                {
-                    slot.SetItem(null);
-                    SetItem(null);
-                }
-                else
-                {
+                    else if (ATM.category == Category.MainWeapon && slot.category == Category.SubWeapon && Inven.AddItem(Inven.MainWeapon[Inven.SubWeapon.IndexOf(slot)], this))
+                    {
+                        Inven.MainWeapon[Inven.SubWeapon.IndexOf(slot)].SetItem(ATM);
+                        if (ATM == item)
+                        {
+                            SetItem(null);
+                        }
+                    }
+                    else if (ATM.category == Category.SubWeapon && slot.category == Category.MainWeapon && Inven.AddItem(Inven.SubWeapon[Inven.MainWeapon.IndexOf(slot)], this))
+                    {
+                        Inven.SubWeapon[Inven.MainWeapon.IndexOf(slot)].SetItem(ATM);
+                        if (ATM == item)
+                        {
+                            SetItem(null);
+                        }
+                    }
+                    else
+                    {
 
+                    }
                 }
             }
         }

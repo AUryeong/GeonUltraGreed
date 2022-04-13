@@ -44,37 +44,86 @@ public class PlayerInven : MonoBehaviour
         }
     }
 
-    public bool AddItem(ItemSlot item)
+    public bool AddItem(Item item)
+    {
+        if (item != null)
+        {
+            List<ItemSlot> emptylist = Inventories.FindAll((ItemSlot x) => x.item == null);
+            if (emptylist.Count > 0)
+            {
+                emptylist[0].SetItem(item);
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    public bool AddItem(ItemSlot item, ItemSlot order = null)
     {
         if(item != null)
         {
-            List<ItemSlot> emptylist = Inventories.FindAll((ItemSlot x) => x.item == null && x != item);
+            List<ItemSlot> emptylist = Inventories.FindAll((ItemSlot x) => x.item == null || item == x || (order != null && order == x));
             if (emptylist.Count > 0)
             {
                 emptylist[0].SetItem(item.item);
                 return true;
             }
-            
+            return false;
         }
-        return false;
+        return true;
     }
 
+    public bool AddItem(List<Item> itemlist)
+    {
+        if (itemlist != null && itemlist.Count > 0)
+        {
+            List<ItemSlot> emptylist = Inventories.FindAll((ItemSlot x) => x.item == null);
+            if (emptylist.Count >= itemlist.Count)
+            {
+                int i2 = 0;
+                for (int i = 0; i < itemlist.Count; i++)
+                {
+                    if (itemlist[i] == null)
+                    {
+                        emptylist[i2].SetItem(itemlist[i]);
+                    }
+                    else
+                    {
+                        emptylist[i2].SetItem(itemlist[i]);
+                        i2++;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
     public bool AddItem(List<ItemSlot> itemlist)
     {
         if (itemlist != null && itemlist.Count > 0)
         {
-            List<ItemSlot> emptylist = Inventories.FindAll((ItemSlot x) => x.item == null && !itemlist.Contains(x));
+            List<ItemSlot> emptylist = Inventories.FindAll((ItemSlot x) => x.item == null || itemlist.Contains(x));
             if (emptylist.Count >= itemlist.Count)
             {
+                int i2 = 0;
                 for(int i = 0; i < itemlist.Count; i++)
                 {
-                    emptylist[i].SetItem(itemlist[i].item);
+                    if(itemlist[i].item == null)
+                    {
+                        emptylist[i2].SetItem(itemlist[i].item);
+                    }
+                    else
+                    {
+                        emptylist[i2].SetItem(itemlist[i].item);
+                        i2++;
+                    }
                 }
                 return true;
             }
-
+            return false;
         }
-        return false;
+        return true;
     }
 
     private void Awake()
@@ -108,7 +157,11 @@ public class PlayerInven : MonoBehaviour
                 copies.category = ItemSlot.Category.Accessory;
             }
         }
-        copy.SetItem(new Item() { ItemText = "ShortSword", category = ItemSlot.Category.MainWeapon });
+        AddItem(new Item() { ItemText = "ShortSword", category = ItemSlot.Category.MainWeapon });
+        AddItem(new Item() { ItemText = "HeaterShield", category = ItemSlot.Category.SubWeapon });
+        AddItem(new Item() { ItemText = "ShortSpear", category = ItemSlot.Category.MainWeapon });
+        AddItem(new Item() { ItemText = "RingOfSpeed", category = ItemSlot.Category.Accessory });
+        AddItem(new Item() { ItemText = "RingOfSpeed", category = ItemSlot.Category.Accessory });
     }
 
 }

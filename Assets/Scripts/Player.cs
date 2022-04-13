@@ -114,20 +114,10 @@ public class Player : Singleton<Player>
 
     void CheckDashing(float deltaTime)
     {
-        if (dashcooldown >= dashcooltime)
-        {
-            dash++;
-            dashcooldown = 0;
-            GameManager.Instance.DashChange();
-        }
-        else if (dash < maxdash)
-        {
-            dashcooldown += deltaTime;
-        }
         if(dashing2 > 0)
         {
             dashing2 -= deltaTime;
-            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, dashing, 1f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, Vector2.one, 0, dashing, 0.5f, LayerMask.GetMask("Platform"));
             if(rayhit.collider == null)
             {
                 Rigid.velocity = new Vector2(0, 0);
@@ -142,6 +132,11 @@ public class Player : Singleton<Player>
                     obj.transform.position = sprite.transform.position;
                     dashjansang = true;
                 }
+            }
+            else
+            {
+                dashing2 = 0;
+                Rigid.AddForce(new Vector2(dashing.x, dashing.y * 10));
             }
         }
         if (Input.GetMouseButtonDown(1) && dash > 0)
@@ -178,9 +173,9 @@ public class Player : Singleton<Player>
     {
         if (Rigid.velocity.y < 0)
         {
-            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.5f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
             if (rayhit.collider != null || rayhit2.collider != null || rayhit3.collider != null)
             {
                 jump = jumpmax;
@@ -201,7 +196,22 @@ public class Player : Singleton<Player>
             CheckDashing(time);
             CheckUI();
         }
+        CheckDashed(time);
         CheckJumped();
+    }
+
+    void CheckDashed(float deltaTime)
+    {
+        if (dashcooldown >= dashcooltime)
+        {
+            dash++;
+            dashcooldown = 0;
+            GameManager.Instance.DashChange();
+        }
+        else if (dash < maxdash)
+        {
+            dashcooldown += deltaTime;
+        }
     }
 
     public enum Hand
