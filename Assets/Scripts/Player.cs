@@ -2,16 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Singleton<Player>
+public class Player : UnitBase
 {
     [SerializeField]
     private GameObject sprite;
     [SerializeField]
-    private GameObject dashsprite;
-    public PlayerInven Inven;
+    private GameObject Dashsprite;
     [SerializeField]
-    private ItemSlot slot;
+    private SpriteRenderer AttackSprite;
+    public PlayerInven Inven;
     private Rigidbody2D rigid;
+
+
+    private static Player instance = null;
+    public static Player Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType(typeof(Player)) as Player;
+            }
+            return instance;
+        }
+    }
 
     public Rigidbody2D Rigid
     {
@@ -26,25 +40,26 @@ public class Player : Singleton<Player>
     }
 
     [Header("Status")]
-    public float speed;
-    public float jumpspeed;
-    public int jumpmax;
-    public float hp;
-    public int maxhp;
-    public int maxdash;
-    public int dash;
-    public int dashcooltime;
-    Vector2 dashing;
-    float dashing2;
-    bool dashjansang;
-    float dashcooldown;
+    public float Speed;
+    public float JumpSpeed;
+    public int JumpMax;
+    public int DashMax;
+    public int Dash;
+    public int DashCooltime;
+    Vector2 Dashing;
+    float Dashing2;
+    bool Dashjansang;
+    float DashCooldown;
     int jump;
     bool jumping;
     int jumpadd;
+    int attackindex;
+    float attackCooltime;
 
-    void Start()
+    protected override void Start()
     {
-        jump = jumpmax;
+        jump = JumpMax;
+        Inven.Init();
     }
 
     public bool IsActable()
@@ -61,7 +76,7 @@ public class Player : Singleton<Player>
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.7f), Vector2.right, 0.85f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
-                transform.Translate(Vector3.right * deltaTime * speed / 100 * 6);
+                transform.Translate(Vector3.right * deltaTime * Speed / 100 * 6);
             }
         }
         else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
@@ -71,7 +86,7 @@ public class Player : Singleton<Player>
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.7f), Vector2.left, 0.85f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
-                transform.Translate(Vector3.left * deltaTime * speed / 100 * 6);
+                transform.Translate(Vector3.left * deltaTime * Speed / 100 * 6);
             }
         }
     }
@@ -108,11 +123,11 @@ public class Player : Singleton<Player>
                 jumpadd = 20;
                 jumping = true;
                 Rigid.velocity = new Vector2(Rigid.velocity.x, 0);
-                Rigid.AddForce(Vector3.up * 600 * jumpspeed);
+                Rigid.AddForce(Vector3.up * 600 * JumpSpeed);
             }
             else if (jumpadd > 0)
             {
-                Rigid.AddForce(Vector3.up * jumpspeed * 10);
+                Rigid.AddForce(Vector3.up * JumpSpeed * 10);
                 jumpadd--;
             }
         }
@@ -128,42 +143,42 @@ public class Player : Singleton<Player>
 
     void CheckDashing(float deltaTime)
     {
-        if(dashing2 > 0)
+        if (Dashing2 > 0)
         {
-            dashing2 -= deltaTime;
-            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, Vector2.one, 0, dashing, 0.5f, LayerMask.GetMask("Platform"));
-            if(rayhit.collider == null)
+            Dashing2 -= deltaTime;
+            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, Vector2.one, 0, Dashing, 0.5f, LayerMask.GetMask("Platform"));
+            if (rayhit.collider == null)
             {
                 Rigid.velocity = new Vector2(0, 0);
-                transform.Translate(dashing * deltaTime / 1.5f);
-                if (dashing2 <= 0)
+                transform.Translate(Dashing * deltaTime / 1.5f);
+                if (Dashing2 <= 0)
                 {
-                    Rigid.AddForce(new Vector2(dashing.x, dashing.y*10));
+                    Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
                 }
-                if (dashing2 < 0.05f && !dashjansang)
+                if (Dashing2 < 0.05f && !Dashjansang)
                 {
-                    GameObject obj = PoolManager.Instance.Init(dashsprite, 0.2f);
+                    GameObject obj = PoolManager.Instance.Init(Dashsprite, 0.2f);
                     obj.transform.position = sprite.transform.position;
-                    dashjansang = true;
+                    Dashjansang = true;
                 }
             }
             else
             {
-                dashing2 = 0;
-                Rigid.AddForce(new Vector2(dashing.x, dashing.y * 10));
+                Dashing2 = 0;
+                Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
             }
         }
-        if (Input.GetMouseButtonDown(1) && dash > 0)
+        if (Input.GetMouseButtonDown(1) && Dash > 0)
         {
             Rigid.velocity = new Vector2(0, 0);
-            Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position + new Vector3(0,0,10);
+            Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position + new Vector3(0, 0, 10);
             Vector3 vector2 = vector.normalized * Mathf.Rad2Deg;
-            dashing = vector2;
-            dashing2 = 0.1f;
-            dashjansang = false;
-            GameObject obj = PoolManager.Instance.Init(dashsprite, 0.2f);
+            Dashing = vector2;
+            Dashing2 = 0.1f;
+            Dashjansang = false;
+            GameObject obj = PoolManager.Instance.Init(Dashsprite, 0.2f);
             obj.transform.position = sprite.transform.position;
-            dash--;
+            Dash--;
             GameManager.Instance.DashChange();
         }
     }
@@ -192,15 +207,15 @@ public class Player : Singleton<Player>
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
             if (rayhit.collider != null || rayhit2.collider != null || rayhit3.collider != null)
             {
-                jump = jumpmax;
+                jump = JumpMax;
             }
-            else if (jump == jumpmax)
+            else if (jump == JumpMax)
             {
                 jump--;
             }
         }
     }
-    void Update()
+    protected override void Update()
     {
         float time = Time.deltaTime;
         if (IsActable())
@@ -209,23 +224,76 @@ public class Player : Singleton<Player>
             CheckMoving(time);
             CheckDashing(time);
             CheckUI();
+            CheckMainItem(time);
         }
         CheckDashed(time);
         CheckJumped();
         CheckHandChanged();
+        CheckMainItem();
     }
 
+    void CheckMainItem()
+    {
+        Item item = Inven.GetHands()[0].item;
+        if (item != null)
+        {
+            Sprite sprite = Resources.Load<Sprite>("Item/" + item.ItemText + "0");
+            if(sprite == null)
+            {
+                sprite = Resources.Load<Sprite>("Item/" + item.ItemText);
+            }
+            if (AttackSprite.sprite != sprite)
+            {
+                AttackSprite.sprite = sprite;
+            }
+        }
+        else
+        {
+            Sprite sprite = Resources.Load<Sprite>("Item/None");
+            if (AttackSprite.sprite != sprite)
+            {
+                AttackSprite.sprite = sprite;
+            }
+        }
+    }
+
+    void CheckMainItem(float deltaTime)
+    {
+        if (attackCooltime > 0)
+        {
+            attackCooltime -= deltaTime;
+        }
+        Item item = Inven.GetHands()[0].item;
+        if (item != null)
+        {
+            Vector3 target = Rigid.position;
+            Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            float angle = Mathf.Atan2(mouse.y - target.y, mouse.x - target.x) * Mathf.Rad2Deg;
+            if (Input.GetMouseButtonDown(0) && attackCooltime <= 0)
+            {
+                attackindex = (attackindex + 1) % 2;
+                GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("Swing/" + item.ItemText));
+                obj.GetComponent<Attack>().damage = Random.Range(item.GetStat().MinDmg, item.GetStat().MaxDmg + 1);
+                obj.transform.position = transform.position;
+                obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+                obj.transform.Translate(Vector2.up * 3);
+                attackCooltime = 1/ item.GetStat().AttackSpeed;
+            }
+            AttackSprite.transform.rotation = Quaternion.AngleAxis(angle + (attackindex * ((Mathf.Abs(angle) > 90) ? -135 : 135)), Vector3.forward);
+            AttackSprite.flipY = (mouse.x - target.x < 0);
+        }
+    }
     void CheckDashed(float deltaTime)
     {
-        if (dashcooldown >= dashcooltime)
+        if (DashCooldown >= DashCooltime)
         {
-            dash++;
-            dashcooldown = 0;
+            Dash++;
+            DashCooldown = 0;
             GameManager.Instance.DashChange();
         }
-        else if (dash < maxdash)
+        else if (Dash < DashMax)
         {
-            dashcooldown += deltaTime;
+            DashCooldown += deltaTime;
         }
     }
 

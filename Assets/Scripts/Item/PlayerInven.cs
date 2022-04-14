@@ -142,7 +142,7 @@ public class PlayerInven : MonoBehaviour
         return true;
     }
 
-    private void Awake()
+    public void Init()
     {
         Inventories.Add(copy);
         foreach (GameObject obj in gameObjects)
@@ -173,11 +173,7 @@ public class PlayerInven : MonoBehaviour
                 copies.category = ItemSlot.Category.Accessory;
             }
         }
-        AddItem(new Item() { ItemText = "ShortSword", category = ItemSlot.Category.MainWeapon });
-        AddItem(new Item() { ItemText = "HeaterShield", category = ItemSlot.Category.SubWeapon });
-        AddItem(new Item() { ItemText = "ShortSpear", category = ItemSlot.Category.MainWeapon });
-        AddItem(new Item() { ItemText = "RingOfSpeed", category = ItemSlot.Category.Accessory });
-        AddItem(new Item() { ItemText = "RingOfSpeed", category = ItemSlot.Category.Accessory });
+        AddItem(new ShortSword());
     }
 
     public enum Hand

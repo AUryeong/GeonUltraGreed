@@ -19,7 +19,7 @@ public class GameManager : Singleton<GameManager>
 	[SerializeField]
 	Sprite defaultcursor;
 
-	[Header("[UI - HP]")]
+	[Header("[UI - Hp]")]
 	[SerializeField]
 	Image Hpbar;
 	[SerializeField]
@@ -37,7 +37,7 @@ public class GameManager : Singleton<GameManager>
 	[SerializeField]
 	List<Image> Dashbars;
 
-	int dashcount;
+	int Dashcount;
 	Player player;
 
 	protected override void Awake()
@@ -73,11 +73,11 @@ public class GameManager : Singleton<GameManager>
 
 	public void DashChange()
     {
-		if(dashcount != player.maxdash)
+		if(Dashcount != player.DashMax)
         {
 			int dc = Dashbars.Count;
-			int chai = player.maxdash - dc;
-			if (player.maxdash > dc)
+			int chai = player.DashMax - dc;
+			if (player.DashMax > dc)
             {
 				for(int i = 0; i < chai; i++)
                 {
@@ -90,7 +90,7 @@ public class GameManager : Singleton<GameManager>
             }
 			for(int i = 0; i< dc; i++)
             {
-                if (i < player.maxdash)
+                if (i < player.DashMax)
                 {
 					Dashbars[i].gameObject.SetActive(true);
                 }
@@ -99,13 +99,13 @@ public class GameManager : Singleton<GameManager>
 					Dashbars[i].gameObject.SetActive(false);
 				}
             }
-			Dashbarright.GetComponent<RectTransform>().anchoredPosition = new Vector3(12 + player.maxdash * 54, 0, 0);
+			Dashbarright.GetComponent<RectTransform>().anchoredPosition = new Vector3(12 + player.DashMax * 54, 0, 0);
 			Dashbarright.transform.SetAsLastSibling();
-			dashcount = player.maxdash;
+			Dashcount = player.DashMax;
         }
-		for(int i = 0; i < player.maxdash; i++)
+		for(int i = 0; i < player.DashMax; i++)
         {
-            if (i < player.dash)
+            if (i < player.Dash)
 			{
 				Dashbars[i].transform.GetChild(0).gameObject.SetActive(true);
 			}
@@ -118,9 +118,9 @@ public class GameManager : Singleton<GameManager>
 
 	public void HealthChange()
     {
-		float f = player.hp / player.maxhp;
+		float f = player.Hp / player.MaxHp;
 		Hpbar.fillAmount = f;
 		Hpwave.GetComponent<RectTransform>().anchoredPosition = new Vector3(-126f + (300 * f), 0, 0);
-		Hptext.text = player.hp + " / " + player.maxhp;
+		Hptext.text = player.Hp + " / " + player.MaxHp;
     }
 }
