@@ -12,13 +12,28 @@ public enum Rank
 
 public class StatBonus
 {
-    public int MinDmg;
-    public int MaxDmg;
-    public int Defense;
-    public float AttackSpeed;
-    public int Power;
-    public int Crit;
-    public int CritDmg;
+    public int MinDmg = 0;
+    public int MaxDmg = 0;
+    public int Defense = 0;
+    public float AttackSpeed = 0;
+    public float AttackSpeedPer = 0;
+    public int Power = 0;
+    public int Crit = 0;
+    public int CritDmg = 0;
+    public float SpeedPer = 0;
+    public StatBonus Add(StatBonus bonus)
+    {
+        this.Power += bonus.Power;
+        this.Defense += bonus.Defense;
+        this.Crit += bonus.Crit;
+        this.MinDmg += bonus.MinDmg;
+        this.MaxDmg += bonus.MaxDmg;
+        this.CritDmg += bonus.CritDmg;
+        this.AttackSpeed += bonus.AttackSpeed;
+        this.AttackSpeedPer += bonus.AttackSpeedPer;
+        this.SpeedPer += bonus.SpeedPer;
+        return this;
+    }
 }
 
 public class Item

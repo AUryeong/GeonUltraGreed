@@ -25,7 +25,20 @@ public class PlayerInven : MonoBehaviour
 
     public Hand hand = Hand.LeftHand;
 
-
+    public StatBonus GetStat()
+    {
+        StatBonus statBonus = new StatBonus();
+        List<ItemSlot> slots = new List<ItemSlot>(Accessories);
+        slots.AddRange(GetHands());
+        foreach(ItemSlot slot in slots)
+        {
+            if(slot.item != null)
+            {
+                statBonus.Add(slot.item.GetStat());
+            }
+        }
+        return statBonus;
+    }
 
     public ItemSlot[] GetHands()
     {

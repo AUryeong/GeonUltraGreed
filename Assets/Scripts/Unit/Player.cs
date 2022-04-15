@@ -61,6 +61,14 @@ public class Player : UnitBase
         jump = JumpMax;
         Inven.Init();
     }
+    
+    public StatBonus GetStat()
+    {
+        StatBonus statBonus = new StatBonus();
+        statBonus.Add(Inven.GetStat());
+        statBonus.AttackSpeed += statBonus.AttackSpeed * statBonus.AttackSpeedPer / 100;
+        return statBonus;
+    }
 
     public bool IsActable()
     {
@@ -71,9 +79,9 @@ public class Player : UnitBase
     {
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.right, 0.85f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.7f), Vector2.right, 0.85f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.7f), Vector2.right, 0.85f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.right, 1.03f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 1.0f), Vector2.right, 1.03f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 1.0f), Vector2.right, 1.03f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
                 transform.Translate(Vector3.right * deltaTime * Speed / 100 * 6);
@@ -81,9 +89,9 @@ public class Player : UnitBase
         }
         else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.left, 0.85f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.7f), Vector2.left, 0.85f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.7f), Vector2.left, 0.85f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.left, 1.03f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 1.0f), Vector2.left, 1.03f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 1.0f), Vector2.left, 1.03f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
                 transform.Translate(Vector3.left * deltaTime * Speed / 100 * 6);
@@ -146,11 +154,11 @@ public class Player : UnitBase
         if (Dashing2 > 0)
         {
             Dashing2 -= deltaTime;
-            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, Vector2.one, 0, Dashing, 0.5f, LayerMask.GetMask("Platform"));
+            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, new Vector2(1.8f, 1.8f), 0, Dashing, 0.25f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null)
             {
                 Rigid.velocity = new Vector2(0, 0);
-                transform.Translate(Dashing * deltaTime / 1.5f);
+                transform.Translate(Dashing * deltaTime);
                 if (Dashing2 <= 0)
                 {
                     Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
@@ -165,7 +173,6 @@ public class Player : UnitBase
             else
             {
                 Dashing2 = 0;
-                Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
             }
         }
         if (Input.GetMouseButtonDown(1) && Dash > 0)
@@ -273,11 +280,11 @@ public class Player : UnitBase
             {
                 attackindex = (attackindex + 1) % 2;
                 GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("Swing/" + item.ItemText));
-                obj.GetComponent<Attack>().damage = Random.Range(item.GetStat().MinDmg, item.GetStat().MaxDmg + 1);
+                obj.GetComponent<Attack>().damage = Random.Range(GetStat().MinDmg, GetStat().MaxDmg + 1);
                 obj.transform.position = transform.position;
                 obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
                 obj.transform.Translate(Vector2.up * 3);
-                attackCooltime = 1/ item.GetStat().AttackSpeed;
+                attackCooltime = 1/ GetStat().AttackSpeed;
             }
             AttackSprite.transform.rotation = Quaternion.AngleAxis(angle + (attackindex * ((Mathf.Abs(angle) > 90) ? -135 : 135)), Vector3.forward);
             AttackSprite.flipY = (mouse.x - target.x < 0);
