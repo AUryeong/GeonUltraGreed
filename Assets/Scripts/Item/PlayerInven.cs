@@ -28,8 +28,8 @@ public class PlayerInven : MonoBehaviour
     public StatBonus GetStat()
     {
         StatBonus statBonus = new StatBonus();
-        List<ItemSlot> slots = new List<ItemSlot>(Accessories);
-        slots.AddRange(GetHands());
+        List<ItemSlot> slots = new List<ItemSlot>(GetHands());
+        slots.AddRange(Accessories);
         foreach(ItemSlot slot in slots)
         {
             if(slot.item != null)
@@ -48,8 +48,8 @@ public class PlayerInven : MonoBehaviour
     {
         List<ItemSlot> list = new List<ItemSlot>(Inventories);
         list.AddRange(Accessories);
-        list.AddRange(MainWeapon);
         list.AddRange(SubWeapon);
+        list.AddRange(MainWeapon);
         return list;
     }
     public void InventoryClose()

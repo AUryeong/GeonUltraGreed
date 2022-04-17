@@ -178,8 +178,10 @@ public class Player : UnitBase
         if (Input.GetMouseButtonDown(1) && Dash > 0)
         {
             Rigid.velocity = new Vector2(0, 0);
-            Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position + new Vector3(0, 0, 10);
-            Vector3 vector2 = vector.normalized * Mathf.Rad2Deg;
+            Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            float angle = Mathf.Atan2(mouse.y - transform.position.y, mouse.x - transform.position.x) * Mathf.Rad2Deg;
+            Vector3 vector2 = Quaternion.AngleAxis(angle - 45, Vector3.forward) * Vector3.one * 20;
+            Debug.Log(vector2);
             Dashing = vector2;
             Dashing2 = 0.1f;
             Dashjansang = false;
@@ -207,7 +209,7 @@ public class Player : UnitBase
 
     void CheckJumped()
     {
-        if (Rigid.velocity.y < 0)
+        if (Rigid.velocity.y <= 0)
         {
             RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
             RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
@@ -285,6 +287,12 @@ public class Player : UnitBase
                 obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
                 obj.transform.Translate(Vector2.up * 3);
                 attackCooltime = 1/ GetStat().AttackSpeed;
+                /*CameraFilter_EarthQuake quake = camera.gameObject.AddComponent<CameraFilter_EarthQuake>();
+                quake.X = 0.2f;
+                quake.Y = 0.13f;
+                AutoScriptDestruct a = camera.gameObject.AddComponent<AutoScriptDestruct>();
+                a.targetScript = quake;
+                a.time = 0.1f;*/
             }
             AttackSprite.transform.rotation = Quaternion.AngleAxis(angle + (attackindex * ((Mathf.Abs(angle) > 90) ? -135 : 135)), Vector3.forward);
             AttackSprite.flipY = (mouse.x - target.x < 0);
