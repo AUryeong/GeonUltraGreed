@@ -61,7 +61,7 @@ public class EnemyBase : UnitBase
         }
     }
 
-    public override void Damaged(int damage)
+    public override void Damaged(float damage)
     {
         base.Damaged(damage);
         hitui = 2;

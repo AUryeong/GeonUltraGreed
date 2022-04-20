@@ -205,6 +205,7 @@ public class ItemSlot : UISlot
             }
         }
         itemimage.SetNativeSize();
+        Player.Instance.StatChange();
         this.item = item;
     }
 }

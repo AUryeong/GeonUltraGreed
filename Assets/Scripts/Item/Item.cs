@@ -12,14 +12,14 @@ public enum Rank
 
 public class StatBonus
 {
-    public int MinDmg = 0;
-    public int MaxDmg = 0;
-    public int Defense = 0;
+    public float MinDmg = 0;
+    public float MaxDmg = 0;
+    public float Defense = 0;
     public float AttackSpeed = 0;
     public float AttackSpeedPer = 0;
     public int Power = 0;
-    public int Crit = 0;
-    public int CritDmg = 0;
+    public float Crit = 0;
+    public float CritDmgPer = 0;
     public float SpeedPer = 0;
     public StatBonus Add(StatBonus bonus)
     {
@@ -28,7 +28,7 @@ public class StatBonus
         this.Crit += bonus.Crit;
         this.MinDmg += bonus.MinDmg;
         this.MaxDmg += bonus.MaxDmg;
-        this.CritDmg += bonus.CritDmg;
+        this.CritDmgPer += bonus.CritDmgPer;
         this.AttackSpeed += bonus.AttackSpeed;
         this.AttackSpeedPer += bonus.AttackSpeedPer;
         this.SpeedPer += bonus.SpeedPer;
@@ -40,23 +40,24 @@ public class Item
 {
     public virtual StatBonus GetStat()
     {
-        return new StatBonus()
-        {
-            MinDmg = 0,
-            MaxDmg = 0,
-            Defense = 0,
-            AttackSpeed = 0,
-            Power = 0,
-            Crit = 0,
-            CritDmg = 0
-        };
+        return new StatBonus();
     }
+
+    public StatBonus AddStat = new StatBonus();
 
     public virtual ItemSlot.Category category
     {
         get
         {
             return ItemSlot.Category.Inventory;
+        }
+    }
+
+    public virtual Rank rank
+    {
+        get
+        {
+            return Rank.Default;
         }
     }
 
@@ -93,13 +94,11 @@ public class ShortSword : Item
         {
             MinDmg = 8,
             MaxDmg = 10,
-            Defense = 0,
-            AttackSpeed = 3.03f,
-            Power = 0,
-            Crit = 0,
-            CritDmg = 0
+            AttackSpeed = 3.03f
         };
     }
+
+    
 
     public override ItemSlot.Category category
     {
@@ -129,7 +128,7 @@ public class ShortSword : Item
     {
         get
         {
-            return "가볍고 주무르기 편한 검";
+            return "\"가볍고 휘두르기 편한 검\"";
         }
     }
 }

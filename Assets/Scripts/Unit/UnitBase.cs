@@ -7,12 +7,12 @@ public class UnitBase : MonoBehaviour
 
     public int MaxHp;
 
-    public int Hp;
+    public float Hp;
     protected virtual void Start()
     {
         Hp = MaxHp;
     }
-    public virtual void Damaged(int damage)
+    public virtual void Damaged(float damage)
     {
         Hp -= damage;
     }

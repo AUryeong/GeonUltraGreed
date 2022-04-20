@@ -42,7 +42,7 @@ public class PlayerInven : MonoBehaviour
 
     public ItemSlot[] GetHands()
     {
-        return new ItemSlot[] { MainWeapon[(int)hand] , SubWeapon[(int)hand] };
+        return new ItemSlot[] { MainWeapon[(int)hand] , SubWeapon[(int)hand] }
     }
     public List<ItemSlot> GetAllItemSlots()
     {
@@ -70,6 +70,15 @@ public class PlayerInven : MonoBehaviour
         {
             selectedimages[((int)hand + 1) % 2].SetActive(false);
             selectedimages[(int)hand].SetActive(true);
+        }
+        ItemSlot slot = GetAllItemSlots().Find((ItemSlot x) => x.item != null && x.select);
+        if(slot != null)
+        {
+            IWManager.Instance.ShowItem(slot);
+        }
+        else
+        {
+            IWManager.Instance.DisableItem();
         }
     }
 
@@ -186,7 +195,7 @@ public class PlayerInven : MonoBehaviour
                 copies.category = ItemSlot.Category.Accessory;
             }
         }
-        AddItem(new ShortSword());
+        AddItem(new ShortSword() { AddStat = new StatBonus() { Power = 10, SpeedPer = 100} });
     }
 
     public enum Hand

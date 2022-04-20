@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
-    public int damage;
+    public float damage;
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision != null && collision.GetComponent<UnitBase>() != null)

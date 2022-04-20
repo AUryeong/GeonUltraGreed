@@ -11,6 +11,7 @@ public class Player : UnitBase
     [SerializeField]
     private SpriteRenderer AttackSprite;
     public PlayerInven Inven;
+
     private Rigidbody2D rigid;
 
 
@@ -46,6 +47,7 @@ public class Player : UnitBase
     public int DashMax;
     public int Dash;
     public int DashCooltime;
+    StatBonus stat;
     Vector2 Dashing;
     float Dashing2;
     bool Dashjansang;
@@ -60,6 +62,7 @@ public class Player : UnitBase
     {
         jump = JumpMax;
         Inven.Init();
+        StatChange();
     }
     
     public StatBonus GetStat()
@@ -110,14 +113,17 @@ public class Player : UnitBase
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             Inven.hand = PlayerInven.Hand.LeftHand;
+            StatChange();
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             Inven.hand = PlayerInven.Hand.RightHand;
+            StatChange();
         }
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             Inven.hand = (PlayerInven.Hand)(((int)Inven.hand + 1) % 2);
+            StatChange();
         }
     }
 
@@ -266,6 +272,11 @@ public class Player : UnitBase
         }
     }
 
+    public void StatChange()
+    {
+        stat = GetStat();
+    }
+
     void CheckMainItem(float deltaTime)
     {
         if (attackCooltime > 0)
@@ -282,11 +293,11 @@ public class Player : UnitBase
             {
                 attackindex = (attackindex + 1) % 2;
                 GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("Swing/" + item.ItemText));
-                obj.GetComponent<Attack>().damage = Random.Range(GetStat().MinDmg, GetStat().MaxDmg + 1);
+                obj.GetComponent<Attack>().damage = Random.RandomRange(stat.MinDmg, stat.MaxDmg + 1f);
                 obj.transform.position = transform.position;
                 obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
                 obj.transform.Translate(Vector2.up * 3);
-                attackCooltime = 1/ GetStat().AttackSpeed;
+                attackCooltime = 1/ stat.AttackSpeed;
                 /*CameraFilter_EarthQuake quake = camera.gameObject.AddComponent<CameraFilter_EarthQuake>();
                 quake.X = 0.2f;
                 quake.Y = 0.13f;
