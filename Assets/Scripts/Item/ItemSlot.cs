@@ -48,6 +48,7 @@ public class ItemSlot : UISlot
                     if (Inven.AddItem(this))
                     {
                         SetItem(null);
+                        Player.Instance.StatChange();
                     }
                     return;
                 }
@@ -64,6 +65,7 @@ public class ItemSlot : UISlot
                     if (Inven.AddItem(this))
                     {
                         SetItem(null);
+                        Player.Instance.StatChange();
                     }
                     return;
                 }
@@ -83,6 +85,7 @@ public class ItemSlot : UISlot
                     if (Inven.AddItem(this))
                     {
                         SetItem(null);
+                        Player.Instance.StatChange();
                     }
                     return;
                 }
@@ -99,6 +102,7 @@ public class ItemSlot : UISlot
             if (Inven.AddItem(slot, this))
             {
                 slot.SetItem(ATM);
+                Player.Instance.StatChange();
                 if (ATM == item)
                 {
                     SetItem(null);
@@ -136,6 +140,7 @@ public class ItemSlot : UISlot
                 {
                     Item item2 = slot.item;
                     Item ATM = item;
+                    Player.Instance.StatChange();
                     if (slot.SetableItem(ATM) && SetableItem(item2))
                     {
                         slot.SetItem(ATM);
@@ -184,7 +189,7 @@ public class ItemSlot : UISlot
         }
         select = false;
     }
-    public virtual void SetItem(Item item, bool X = false)
+    public virtual void SetItem(Item item, bool X = false, bool trigger = false)
     {
         if(item != null)
         {
@@ -205,7 +210,6 @@ public class ItemSlot : UISlot
             }
         }
         itemimage.SetNativeSize();
-        Player.Instance.StatChange();
         this.item = item;
     }
 }

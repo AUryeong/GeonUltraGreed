@@ -12,4 +12,19 @@ public class ColorManager
     public static string BufRed = "<color=#ff002e>";
     public static string BufJupduGreen = RankWhite + " > "  + BufGreen + "+";
     public static string BufJupduRed = RankWhite + " > " + BufRed;
+
+    public static string GetRankColor(Rank rank)
+    {
+        switch (rank)
+        {
+            case Rank.Rare:
+                return RankBlue;
+            case Rank.Unique:
+                return RankYellow;
+            case Rank.Lengendary:
+                return RankPink;
+            default:
+                return RankWhite;
+        }
+    }
 }

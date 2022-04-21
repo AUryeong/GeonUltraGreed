@@ -21,6 +21,7 @@ public class StatBonus
     public float Crit = 0;
     public float CritDmgPer = 0;
     public float SpeedPer = 0;
+    public float DashDmgPer = 0;
     public StatBonus Add(StatBonus bonus)
     {
         this.Power += bonus.Power;
@@ -32,103 +33,54 @@ public class StatBonus
         this.AttackSpeed += bonus.AttackSpeed;
         this.AttackSpeedPer += bonus.AttackSpeedPer;
         this.SpeedPer += bonus.SpeedPer;
+        DashDmgPer += bonus.DashDmgPer;
         return this;
+    }
+    public StatBonus Copy()
+    {
+        return new StatBonus()
+        {
+            Power = this.Power,
+            Defense = this.Defense,
+            Crit = this.Crit,
+            MinDmg = this.MinDmg,
+            MaxDmg = this.MaxDmg,
+            CritDmgPer = this.CritDmgPer,
+            AttackSpeed = this.AttackSpeed,
+            AttackSpeedPer = this.AttackSpeedPer,
+            SpeedPer = this.SpeedPer,
+            DashDmgPer = this.DashDmgPer
+        };
     }
 }
 
 public class Item
 {
-    public virtual StatBonus GetStat()
-    {
-        return new StatBonus();
-    }
+    public StatBonus Stat = new StatBonus();
 
     public StatBonus AddStat = new StatBonus();
 
-    public virtual ItemSlot.Category category
-    {
-        get
-        {
-            return ItemSlot.Category.Inventory;
-        }
-    }
+    public ItemSlot.Category category = ItemSlot.Category.Inventory;
 
-    public virtual Rank rank
-    {
-        get
-        {
-            return Rank.Default;
-        }
-    }
+    public Rank rank = Rank.Default;
 
-    public virtual string ItemText
-    {
-        get
-        {
-            return "그 없";
-        }
-    }
+    public string ItemText = "그 없";
 
-    public virtual string Name
-    {
-        get
-        {
-            return "그 없";
-        }
-    }
+    public string Name = "그 없";
 
-    public virtual string Description
-    {
-        get
-        {
-            return "에러에러";
-        }
-    }
-}
+    public string Description = "에러에러";
 
-public class ShortSword : Item
-{
-    public override StatBonus GetStat()
+    public Item Copy()
     {
-        return new StatBonus()
+        return new Item()
         {
-            MinDmg = 8,
-            MaxDmg = 10,
-            AttackSpeed = 3.03f
+            Stat = this.Stat.Copy(),
+            category = this.category,
+            rank = this.rank,
+            ItemText = this.ItemText,
+            Name = this.Name,
+            Description = this.Description,
+            AddStat = this.AddStat.Copy(),
         };
-    }
-
-    
-
-    public override ItemSlot.Category category
-    {
-        get
-        {
-            return ItemSlot.Category.MainWeapon;
-        }
-    }
-
-    public override string ItemText
-    {
-        get
-        {
-            return "ShortSword";
-        }
-    }
-
-    public override string Name
-    {
-        get
-        {
-            return "숏 소드";
-        }
-    }
-
-    public override string Description
-    {
-        get
-        {
-            return "\"가볍고 휘두르기 편한 검\"";
-        }
     }
 }

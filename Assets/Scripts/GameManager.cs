@@ -37,6 +37,7 @@ public class GameManager : Singleton<GameManager>
 	[SerializeField]
 	List<Image> Dashbars;
 
+	public DropItem dropitem;
 	int Dashcount;
 	Player player;
 
@@ -44,6 +45,7 @@ public class GameManager : Singleton<GameManager>
 	{
 		base.Awake();
 		player = Player.Instance;
+		
 		DashChange();
 		HealthChange();
 	}
@@ -51,6 +53,11 @@ public class GameManager : Singleton<GameManager>
 	{
 		CursorChange();
 	}
+
+	public static string NumberComma(int num)
+    {
+		return string.Format("{0:#,0}", num);
+    }
 
 	void CursorChange()
 	{

@@ -10,6 +10,8 @@ public class Player : UnitBase
     private GameObject Dashsprite;
     [SerializeField]
     private SpriteRenderer AttackSprite;
+    [SerializeField]
+    private PlayerEvent playerEvent;
     public PlayerInven Inven;
 
     private Rigidbody2D rigid;
@@ -41,15 +43,20 @@ public class Player : UnitBase
     }
 
     [Header("Status")]
-    public float Speed;
     public float JumpSpeed;
     public int JumpMax;
     public int DashMax;
     public int Dash;
     public int DashCooltime;
     StatBonus stat;
-    Vector2 Dashing;
-    float Dashing2;
+
+    public StatBonus Stat
+    {
+        get { return stat; }
+    }
+
+    public Vector2 Dashing;
+    public float Dashing2;
     bool Dashjansang;
     float DashCooldown;
     int jump;
@@ -69,7 +76,6 @@ public class Player : UnitBase
     {
         StatBonus statBonus = new StatBonus();
         statBonus.Add(Inven.GetStat());
-        statBonus.AttackSpeed += statBonus.AttackSpeed * statBonus.AttackSpeedPer / 100;
         return statBonus;
     }
 
@@ -87,7 +93,7 @@ public class Player : UnitBase
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 1.0f), Vector2.right, 1.03f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
-                transform.Translate(Vector3.right * deltaTime * Speed / 100 * 6);
+                transform.Translate(Vector3.right * deltaTime * (stat.SpeedPer + 100) / 100 * 6);
             }
         }
         else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
@@ -97,7 +103,7 @@ public class Player : UnitBase
             RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 1.0f), Vector2.left, 1.03f, LayerMask.GetMask("Platform"));
             if (rayhit.collider == null && rayhit2.collider == null && rayhit3.collider == null)
             {
-                transform.Translate(Vector3.left * deltaTime * Speed / 100 * 6);
+                transform.Translate(Vector3.left * deltaTime * (stat.SpeedPer + 100) / 100 * 6);
             }
         }
     }
@@ -106,6 +112,9 @@ public class Player : UnitBase
     {
         Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition) - sprite.transform.position;
         sprite.transform.localScale = new Vector3((vector.x < 0) ? -1 : 1, 1, 1);
+        Vector3 vector2 = AttackSprite.transform.localPosition;
+        float x = Mathf.Abs(vector2.x);
+        AttackSprite.transform.localPosition = new Vector3((vector.x < 0) ? -x : x, vector2.y, 0);
     }
 
     void CheckHandChanged()
@@ -176,10 +185,6 @@ public class Player : UnitBase
                     Dashjansang = true;
                 }
             }
-            else
-            {
-                Dashing2 = 0;
-            }
         }
         if (Input.GetMouseButtonDown(1) && Dash > 0)
         {
@@ -187,9 +192,9 @@ public class Player : UnitBase
             Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float angle = Mathf.Atan2(mouse.y - transform.position.y, mouse.x - transform.position.x) * Mathf.Rad2Deg;
             Vector3 vector2 = Quaternion.AngleAxis(angle - 45, Vector3.forward) * Vector3.one * 20;
-            Debug.Log(vector2);
             Dashing = vector2;
             Dashing2 = 0.1f;
+            playerEvent.units.Clear();
             Dashjansang = false;
             GameObject obj = PoolManager.Instance.Init(Dashsprite, 0.2f);
             obj.transform.position = sprite.transform.position;
@@ -292,18 +297,19 @@ public class Player : UnitBase
             if (Input.GetMouseButtonDown(0) && attackCooltime <= 0)
             {
                 attackindex = (attackindex + 1) % 2;
+                AttackSprite.sortingOrder = (attackindex == 0) ? 2 : 4;
                 GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("Swing/" + item.ItemText));
-                obj.GetComponent<Attack>().damage = Random.RandomRange(stat.MinDmg, stat.MaxDmg + 1f);
+                obj.GetComponent<PlayerAttack>().damage = (Random.RandomRange(stat.MinDmg, stat.MaxDmg + 1f))*(100 + stat.Power)/100;
                 obj.transform.position = transform.position;
                 obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
-                obj.transform.Translate(Vector2.up * 3);
+                obj.transform.Translate(Vector2.up * (GetComponent<BoxCollider2D>().size.y+1));
                 attackCooltime = 1/ stat.AttackSpeed;
-                /*CameraFilter_EarthQuake quake = camera.gameObject.AddComponent<CameraFilter_EarthQuake>();
-                quake.X = 0.2f;
-                quake.Y = 0.13f;
-                AutoScriptDestruct a = camera.gameObject.AddComponent<AutoScriptDestruct>();
+                CameraFilter_EarthQuake quake = Camera.main.gameObject.AddComponent<CameraFilter_EarthQuake>();
+                quake.X = 0.1f;
+                quake.Y = 0.055f;
+                AutoScriptDestruct a = Camera.main.gameObject.AddComponent<AutoScriptDestruct>();
                 a.targetScript = quake;
-                a.time = 0.1f;*/
+                a.time = 0.1f;
             }
             AttackSprite.transform.rotation = Quaternion.AngleAxis(angle + (attackindex * ((Mathf.Abs(angle) > 90) ? -135 : 135)), Vector3.forward);
             AttackSprite.flipY = (mouse.x - target.x < 0);

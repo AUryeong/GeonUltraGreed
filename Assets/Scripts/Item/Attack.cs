@@ -5,10 +5,17 @@ using UnityEngine;
 public class Attack : MonoBehaviour
 {
     public float damage;
+    public List<GameObject> targets = new List<GameObject>();
+    
+    protected virtual void OnEnable()
+    {
+        targets.Clear();
+    }
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision != null && collision.GetComponent<UnitBase>() != null)
+        if (collision != null && collision.GetComponent<UnitBase>() != null && !targets.Contains(collision.gameObject))
         {
+            targets.Add(collision.gameObject);
             AttackSuccess(collision.GetComponent<UnitBase>());
         }
     }
@@ -23,7 +30,7 @@ public class Attack : MonoBehaviour
     }
     protected virtual void Start()
     {
-        
+         
     }
 
     protected virtual void Update()
