@@ -17,9 +17,13 @@ public class UnitBase : MonoBehaviour
         Hp -= damage;
     }
 
-    
    protected virtual void Update()
     {
-        
+
+    }
+
+    protected virtual void OnDie()
+    {
+
     }
 }

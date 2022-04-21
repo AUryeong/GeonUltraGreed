@@ -8,15 +8,19 @@ public class EnemyBase : UnitBase
     public float Speed;
 
     [SerializeField]
-    private SpriteRenderer spriteRenderer;
-    private bool agro;
-    private float hitui;
-    private float hitx;
+    protected SpriteRenderer spriteRenderer;
+    protected bool agro;
+    protected float hitui;
+    protected float hitx;
+    protected bool hitred = true;
+    protected Color color;
+    protected float hitu;
     protected override void Update()
     {
         float deltaTime = Time.deltaTime;
         if(Hp <= 0)
         {
+            OnDie();
             gameObject.SetActive(false);
         }
         if (agro)
@@ -59,17 +63,43 @@ public class EnemyBase : UnitBase
                 spriteRenderer.transform.parent.gameObject.SetActive(false);
             }
         }
+        if (hitu >0 && hitred)
+        {
+            hitu -= deltaTime;
+            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
+            if (hitu <= 0)
+            {
+                GetComponent<SpriteRenderer>().color = color;
+            }
+        }
     }
 
     public override void Damaged(float damage)
     {
         base.Damaged(damage);
+        if (hitred)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
+            hitu = 0.05f;
+        }
         hitui = 2;
     }
     protected override void Start()
     {
         base.Start();
         hitx = spriteRenderer.size.x;
+        if (hitred)
+        {
+            color = GetComponent<SpriteRenderer>().color;
+        }
+    }
+    protected override void OnDie()
+    {
+        base.OnDie();
+        GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("FX/DieFX"));
+        float f = ((gameObject.GetComponent<BoxCollider2D>().size.x > gameObject.GetComponent<BoxCollider2D>().size.y) ? gameObject.GetComponent<BoxCollider2D>().size.x : gameObject.GetComponent<BoxCollider2D>().size.y);
+        obj.transform.localScale = new Vector3(f, f, f);
+        obj.transform.position = gameObject.transform.position;
     }
     protected virtual void FixedUpdate()
     {

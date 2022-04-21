@@ -22,18 +22,34 @@ public class StatBonus
     public float CritDmgPer = 0;
     public float SpeedPer = 0;
     public float DashDmgPer = 0;
+    public float Strong = 0;
+    public float Blocking = 0;
+    public float Evade = 0;
+    public float Speed = 0;
+    public float ReloadSpeed = 0;
+    public float ReloadSpeedPer = 0;
+    public float FixedDamage = 0;
+    public float GoldBonusPer = 0;
     public StatBonus Add(StatBonus bonus)
     {
-        this.Power += bonus.Power;
-        this.Defense += bonus.Defense;
-        this.Crit += bonus.Crit;
-        this.MinDmg += bonus.MinDmg;
-        this.MaxDmg += bonus.MaxDmg;
-        this.CritDmgPer += bonus.CritDmgPer;
-        this.AttackSpeed += bonus.AttackSpeed;
-        this.AttackSpeedPer += bonus.AttackSpeedPer;
-        this.SpeedPer += bonus.SpeedPer;
+        Power += bonus.Power;
+        Defense += bonus.Defense;
+        Crit += bonus.Crit;
+        MinDmg += bonus.MinDmg;
+        MaxDmg += bonus.MaxDmg;
+        CritDmgPer += bonus.CritDmgPer;
+        AttackSpeed += bonus.AttackSpeed;
+        AttackSpeedPer += bonus.AttackSpeedPer;
+        SpeedPer += bonus.SpeedPer;
         DashDmgPer += bonus.DashDmgPer;
+        Strong += bonus.Strong;
+        Blocking += bonus.Blocking;
+        Evade += bonus.Evade;
+        Speed += bonus.Speed;
+        ReloadSpeed += bonus.ReloadSpeed;
+        ReloadSpeedPer += bonus.ReloadSpeedPer;
+        FixedDamage += bonus.FixedDamage;
+        GoldBonusPer += bonus.GoldBonusPer;
         return this;
     }
     public StatBonus Copy()
@@ -49,7 +65,15 @@ public class StatBonus
             AttackSpeed = this.AttackSpeed,
             AttackSpeedPer = this.AttackSpeedPer,
             SpeedPer = this.SpeedPer,
-            DashDmgPer = this.DashDmgPer
+            DashDmgPer = this.DashDmgPer,
+            Strong = this.Strong,
+            Blocking = this.Blocking,
+            Evade = this.Evade,
+            Speed = this.Speed,
+            ReloadSpeed = this.ReloadSpeed,
+            ReloadSpeedPer = this.ReloadSpeedPer,
+            FixedDamage = this.FixedDamage,
+            GoldBonusPer = this.GoldBonusPer
         };
     }
 }
