@@ -63,6 +63,8 @@ public class Player : UnitBase
     int attackindex;
     float attackCooltime;
     List<UnitBase> DashDamageUnits = new List<UnitBase>();
+    public GameObject FButton;
+    public FButtonUnitBase FButtonUnit;
 
     protected override void Start()
     {
@@ -173,6 +175,14 @@ public class Player : UnitBase
         }
     }
 
+    void CheckF()
+    {
+        if(FButtonUnit != null && Input.GetKeyDown(KeyCode.F))
+        {
+            FButtonUnit.OnF();
+        }
+    }
+
     void CheckDashing(float deltaTime)
     {
         if (Dashing2 > 0)
@@ -264,6 +274,7 @@ public class Player : UnitBase
             CheckMoving(time);
             CheckDashing(time);
             CheckUI();
+            CheckF();
             CheckMainItem(time);
         }
         CheckDashed(time);
@@ -319,6 +330,7 @@ public class Player : UnitBase
                 attackindex = (attackindex + 1) % 2;
                 AttackSprite.sortingOrder = (attackindex == 0) ? 2 : 4;
                 GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("Swing/" + item.ItemText));
+                obj.GetComponent<PlayerAttack>().item = Inven.GetHands()[0].item;
                 obj.GetComponent<PlayerAttack>().damage = (Random.RandomRange(stat.MinDmg, stat.MaxDmg + 1f))*( 100 +stat.Power)/100;
                 obj.transform.position = transform.position;
                 obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);

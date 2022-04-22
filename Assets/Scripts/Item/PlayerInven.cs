@@ -228,6 +228,7 @@ public class PlayerInven : MonoBehaviour
             category = ItemSlot.Category.MainWeapon,
             Description = "\"가볍고 휘두르기 편한 검\"",
             Name = "숏 소드",
+            AttackEffect = "ShortSword",
             rank = Rank.Default,
             Stat = new StatBonus()
             {
@@ -242,6 +243,7 @@ public class PlayerInven : MonoBehaviour
             category = ItemSlot.Category.MainWeapon,
             Description = "\"크고 아름다운 소드\"",
             Name = "그레이트 소드",
+            AttackEffect = "GreatSword",
             rank = Rank.Default,
             Stat = new StatBonus()
             {

@@ -10,7 +10,7 @@ public class PlayerAttack : Attack
         if(unit.tag == "Enemy")
         {
             base.AttackSuccess(unit);
-            GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("FX/SlashFX"));
+            GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("FX/" + item.HitEffect));
             float f = (unit.GetComponent<BoxCollider2D>().size.x > unit.GetComponent<BoxCollider2D>().size.y) ? unit.GetComponent<BoxCollider2D>().size.y : unit.GetComponent<BoxCollider2D>().size.x;
             obj.transform.localScale = new Vector3(f, f,f);
             obj.transform.position = unit.transform.position;

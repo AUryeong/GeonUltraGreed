@@ -94,6 +94,10 @@ public class Item
 
     public string Description = "에러에러";
 
+    public string AttackEffect = "ShortSword";
+
+    public string HitEffect = "SlashFX";
+
     public Item Copy()
     {
         return new Item()
@@ -105,6 +109,8 @@ public class Item
             Name = this.Name,
             Description = this.Description,
             AddStat = this.AddStat.Copy(),
+            AttackEffect = this.AttackEffect,
+            HitEffect = this.HitEffect
         };
     }
 }

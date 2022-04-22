@@ -40,7 +40,6 @@ public class GameManager : Singleton<GameManager>
 	public DropItem dropitem;
 	int Dashcount;
 	Player player;
-
 	protected override void Awake()
 	{
 		base.Awake();
