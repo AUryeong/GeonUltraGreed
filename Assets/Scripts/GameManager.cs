@@ -127,6 +127,6 @@ public class GameManager : Singleton<GameManager>
 		float f = player.Hp / player.MaxHp;
 		Hpbar.fillAmount = f;
 		Hpwave.GetComponent<RectTransform>().anchoredPosition = new Vector3(-126f + (300 * f), 0, 0);
-		Hptext.text = player.Hp + " / " + player.MaxHp;
+		Hptext.text = Mathf.Round(player.Hp) + " / " + player.MaxHp;
     }
 }

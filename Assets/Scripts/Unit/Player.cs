@@ -97,7 +97,7 @@ public class Player : UnitBase
 
     public override void Damaged(float damage)
     {
-        damage -= damage * stat.Defense;
+        damage -= damage * stat.Defense / 100;
         damage -= stat.Strong;
         base.Damaged(damage <0 ? 0 : damage);
         GameManager.Instance.HealthChange();
@@ -341,8 +341,7 @@ public class Player : UnitBase
                         obj.transform.position = transform.position;
                         obj.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
                         obj.transform.Translate(Vector2.up * (1 + AttackSprite.sprite.bounds.size.y));
-                        Vector3 vector4 = Quaternion.AngleAxis(angle - 90, Vector3.forward) * Vector3.one;
-                        RaycastHit2D[] array = Physics2D.BoxCastAll(transform.position, obj.GetComponent<BoxCollider2D>().size, angle, vector4, 0, LayerMask.GetMask("Enemy"));
+                        RaycastHit2D[] array = Physics2D.BoxCastAll((obj.transform.position+transform.position)/2, obj.GetComponent<BoxCollider2D>().size, angle-90, Vector3.zero, 0, LayerMask.GetMask("Enemy"));
                         for (int i = 0; i < array.Length; i++)
                         {
                             if (array[i].collider != null && array[i].transform.tag == "Enemy")

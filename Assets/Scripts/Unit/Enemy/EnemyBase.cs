@@ -17,6 +17,7 @@ public class EnemyBase : UnitBase
     protected bool hitred = true;
     protected Color color;
     protected float hitu;
+    protected bool left;
 
     protected virtual void CheckHpUI(float deltaTime)
     {
@@ -48,12 +49,14 @@ public class EnemyBase : UnitBase
                 transform.localScale = Vector3.one;
                 spriteRenderer.transform.parent.localScale = new Vector3(-1, 1, 1);
                 transform.Translate(Vector3.right * deltaTime * Speed);
+                left = false;
             }
             else
             {
                 transform.localScale = new Vector3(-1, 1, 1);
                 spriteRenderer.transform.parent.localScale = Vector3.one;
                 transform.Translate(Vector3.left * deltaTime * Speed);
+                left = true;
             }
         }
     }
