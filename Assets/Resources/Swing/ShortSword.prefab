@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5257210682842843144}
   - component: {fileID: 5257210682842843145}
-  - component: {fileID: 894576758456888373}
   - component: {fileID: 1792627132301601246}
   - component: {fileID: 2141715115194149996}
+  - component: {fileID: 4743079155727206043}
   m_Layer: 0
   m_Name: ShortSword
   m_TagString: Untagged
@@ -85,20 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!114 &894576758456888373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5257210682842843191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b2e82c55a404b149a2eae5d77f585bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 0
-  targets: []
 --- !u!95 &1792627132301601246
 Animator:
   serializedVersion: 3
@@ -144,3 +130,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.5, y: 1.75}
   m_EdgeRadius: 0
+--- !u!114 &4743079155727206043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257210682842843191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85204409ad4b4af47b1674fe9c010a1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

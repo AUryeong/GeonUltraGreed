@@ -9,20 +9,38 @@ public class EnemyBase : UnitBase
 
     [SerializeField]
     protected SpriteRenderer spriteRenderer;
+
+    protected SpriteRenderer _spriteRenderer;
     protected bool agro;
     protected float hitui;
     protected float hitx;
     protected bool hitred = true;
     protected Color color;
     protected float hitu;
-    protected override void Update()
+
+    protected virtual void CheckHpUI(float deltaTime)
     {
-        float deltaTime = Time.deltaTime;
-        if(Hp <= 0)
+        if (hitui > 0)
         {
-            OnDie();
-            gameObject.SetActive(false);
+            hitui -= deltaTime;
+            if (!spriteRenderer.transform.parent.gameObject.activeSelf)
+            {
+                spriteRenderer.transform.parent.gameObject.SetActive(true);
+            }
+            spriteRenderer.size = new Vector2(hitx * Hp / MaxHp, spriteRenderer.size.y);
+            spriteRenderer.transform.localPosition = new Vector3(hitx / 2 - (hitx / 2 * Hp / MaxHp), 0, 0);
         }
+        else
+        {
+            if (spriteRenderer.transform.parent.gameObject.activeSelf)
+            {
+                spriteRenderer.transform.parent.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    protected virtual void CheckMove(float deltaTime)
+    {
         if (agro)
         {
             if (Player.Instance.transform.position.x - transform.position.x > 0)
@@ -38,38 +56,41 @@ public class EnemyBase : UnitBase
                 transform.Translate(Vector3.left * deltaTime * Speed);
             }
         }
-        else
+    }
+
+    protected virtual bool CheckDie()
+    {
+        return Hp <= 0;
+    }
+
+    protected virtual void CheckAgro()
+    {
+        if (Vector3.Distance(Player.Instance.transform.position, transform.position) < AgroDistance && !agro)
         {
-            if (Vector3.Distance(Player.Instance.transform.position, transform.position) < AgroDistance)
-            {
-                agro = true;
-                Update();
-            }
+            agro = true;
+            Update();
         }
-        if(hitui > 0)
+    }
+
+    protected override void Update()
+    {
+        float deltaTime = Time.deltaTime;
+        CheckHpUI(deltaTime);
+        if (CheckDie())
         {
-            hitui -= deltaTime;
-            if (!spriteRenderer.transform.parent.gameObject.activeSelf)
-            {
-                spriteRenderer.transform.parent.gameObject.SetActive(true);
-            }
-            spriteRenderer.size = new Vector2(hitx * Hp / MaxHp, spriteRenderer.size.y) ;
-            spriteRenderer.transform.localPosition = new Vector3(hitx/2 -(hitx/2 * Hp / MaxHp), 0, 0);
+            OnDie();
+            gameObject.SetActive(false);
+            return;
         }
-        else
-        {
-            if (spriteRenderer.transform.parent.gameObject.activeSelf)
-            {
-                spriteRenderer.transform.parent.gameObject.SetActive(false);
-            }
-        }
-        if (hitu >0 && hitred)
+        CheckMove(deltaTime);
+        CheckAgro();
+        if (hitu > 0 && hitred)
         {
             hitu -= deltaTime;
-            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
+            _spriteRenderer.color = new Color(255, 0, 0);
             if (hitu <= 0)
             {
-                GetComponent<SpriteRenderer>().color = color;
+                _spriteRenderer.color = color;
             }
         }
     }
@@ -79,7 +100,7 @@ public class EnemyBase : UnitBase
         base.Damaged(damage);
         if (hitred)
         {
-            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
+            _spriteRenderer.color = new Color(255, 0, 0);
             hitu = 0.05f;
         }
         hitui = 2;
@@ -87,10 +108,11 @@ public class EnemyBase : UnitBase
     protected override void Start()
     {
         base.Start();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         hitx = spriteRenderer.size.x;
         if (hitred)
         {
-            color = GetComponent<SpriteRenderer>().color;
+            color = _spriteRenderer.color;
         }
     }
     protected override void OnDie()

@@ -5,10 +5,18 @@ using UnityEngine;
 public class DropGold : MonoBehaviour
 {
     public int money;
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    public float getgold;
+    void Update()
     {
-        if (collision != null && collision.gameObject != null && collision.gameObject.name == "Player Event")
+        if (getgold > 0)
+        {
+            getgold -= Time.deltaTime;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision != null && collision.gameObject != null && collision.gameObject.name == "Player Event" && getgold <= 0)
         {
             Player.Instance.Inven.money += money;
             gameObject.SetActive(false);

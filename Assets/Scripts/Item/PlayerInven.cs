@@ -99,24 +99,28 @@ public class PlayerInven : MonoBehaviour
             if (item.category == ItemSlot.Category.MainWeapon && emptylist.Count > 0)
             {
                 emptylist[0].SetItem(item);
+                Player.Instance.StatChange();
                 return true;
             }
             emptylist = SubWeapon.FindAll((ItemSlot x) => x.item == null);
             if (item.category == ItemSlot.Category.SubWeapon && emptylist.Count > 0)
             {
                 emptylist[0].SetItem(item);
+                Player.Instance.StatChange();
                 return true;
             }
             emptylist = Accessories.FindAll((ItemSlot x) => x.item == null);
             if (item.category == ItemSlot.Category.Accessory && emptylist.Count > 0)
             {
                 emptylist[0].SetItem(item);
+                Player.Instance.StatChange();
                 return true;
             }
             emptylist = Inventories.FindAll((ItemSlot x) => x.item == null);
             if (emptylist.Count > 0)
             {
                 emptylist[0].SetItem(item);
+                Player.Instance.StatChange();
                 return true;
             }
             return false;
@@ -131,6 +135,7 @@ public class PlayerInven : MonoBehaviour
             if (emptylist.Count > 0)
             {
                 emptylist[0].SetItem(item.item);
+                Player.Instance.StatChange();
                 return true;
             }
             return false;
@@ -158,6 +163,7 @@ public class PlayerInven : MonoBehaviour
                         i2++;
                     }
                 }
+                Player.Instance.StatChange();
                 return true;
             }
             return false;
@@ -184,6 +190,7 @@ public class PlayerInven : MonoBehaviour
                         i2++;
                     }
                 }
+                Player.Instance.StatChange();
                 return true;
             }
             return false;
@@ -266,13 +273,10 @@ public class PlayerInven : MonoBehaviour
             }
         };
         Item item2 = shortsword.Copy();
-        item2.AddStat.Add(new StatBonus() { Power = 10 });
-        AddItem(item2);
-        item2 = shortsword.Copy();
         item2.AddStat.Add(new StatBonus() { Power = 100, SpeedPer = 100, AttackSpeedPer = 100 });
         AddItem(item2);
-        GameObject.Find("DropItem_GreatSword").GetComponent<DropItem>().item = greatsword.Copy();
         GameObject.Find("DropItem_ChainArmor").GetComponent<DropItem>().item = chainchestplate.Copy();
+        GameObject.Find("BasicTreasure").GetComponent<ChestBase>().item = greatsword.Copy();
     }
 
     public enum Hand

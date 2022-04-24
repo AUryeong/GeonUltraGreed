@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5257210682842843145}
   - component: {fileID: 5257210682842843190}
   - component: {fileID: 1408273239517338434}
-  - component: {fileID: 894576758456888373}
+  - component: {fileID: 4483952377492636323}
   m_Layer: 0
   m_Name: GreatSword
   m_TagString: Untagged
@@ -130,7 +130,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.75, y: 2.9375}
   m_EdgeRadius: 0
---- !u!114 &894576758456888373
+--- !u!114 &4483952377492636323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,8 +139,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5257210682842843191}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b2e82c55a404b149a2eae5d77f585bf, type: 3}
+  m_Script: {fileID: 11500000, guid: 85204409ad4b4af47b1674fe9c010a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 0
-  targets: []

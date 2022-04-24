@@ -15,6 +15,7 @@ public class UnitBase : MonoBehaviour
     public virtual void Damaged(float damage)
     {
         Hp -= damage;
+
     }
 
    protected virtual void Update()

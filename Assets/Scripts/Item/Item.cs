@@ -10,6 +10,12 @@ public enum Rank
     Lengendary
 }
 
+public enum WeaponAttackType
+{
+    Sword,
+    Bullet
+}
+
 public class StatBonus
 {
     public float MinDmg = 0;
@@ -88,6 +94,8 @@ public class Item
 
     public Rank rank = Rank.Default;
 
+    public WeaponAttackType AttackType = WeaponAttackType.Sword;
+
     public string ItemText = "그 없";
 
     public string Name = "그 없";
@@ -109,6 +117,7 @@ public class Item
             Name = this.Name,
             Description = this.Description,
             AddStat = this.AddStat.Copy(),
+            AttackType = this.AttackType,
             AttackEffect = this.AttackEffect,
             HitEffect = this.HitEffect
         };
