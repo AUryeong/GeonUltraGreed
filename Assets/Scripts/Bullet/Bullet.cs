@@ -31,7 +31,12 @@ public class Bullet : MonoBehaviour
 
     protected virtual void FireCollision()
     {
-        RaycastHit2D[] array = Physics2D.BoxCastAll(transform.position, boxCollider2D.size, gameObject.transform.rotation.z, Vector3.zero, 0, LayerMask.GetMask(((faction == Faction.Player) ? "Enemy" : "Player")));
+        string[] layer = new string[2]
+        {
+                "Player",
+                "PlayerDash"
+        };
+        RaycastHit2D[] array = Physics2D.BoxCastAll(transform.position, boxCollider2D.size, gameObject.transform.rotation.z, Vector3.zero, 0, (faction == Faction.Player) ? LayerMask.GetMask("Enemy") : LayerMask.GetMask(layer));
         for (int i = 0; i < array.Length; i++)
         {
             if (array[i].collider != null && array[i].transform.tag == (((faction == Faction.Player) ? "Enemy" : "Player")))
@@ -48,7 +53,7 @@ public class Bullet : MonoBehaviour
         array = Physics2D.BoxCastAll(transform.position, boxCollider2D.size, gameObject.transform.rotation.z, Vector3.zero, 0, LayerMask.GetMask("Platform"));
         for (int i = 0; i < array.Length; i++)
         {
-            if (array[i].collider != null && array[i].transform.tag != "Float")
+            if (array[i].collider != null)
             {
                 Effect();
                 return;

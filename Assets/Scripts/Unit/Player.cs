@@ -227,6 +227,7 @@ public class Player : UnitBase
             if (Dashing2 <= 0)
             {
                 Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
+                gameObject.layer = 8;
             }
             if (Dashing2 < 0.05f && !Dashjansang)
             {
@@ -248,6 +249,7 @@ public class Player : UnitBase
             GameObject obj = PoolManager.Instance.Init(Dashsprite, 0.2f);
             obj.transform.position = sprite.transform.position;
             Dash--;
+            gameObject.layer = 15;
             GameManager.Instance.DashChange();
         }
     }
@@ -271,9 +273,14 @@ public class Player : UnitBase
     {
         if (Rigid.velocity.y <= 0)
         {
-            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
-            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask("Platform"));
+            string[] layer = new string[2]
+            {
+                "Platform",
+                "Floatform"
+            };
+            RaycastHit2D rayhit = Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask(layer));
+            RaycastHit2D rayhit2 = Physics2D.Raycast(new Vector2(transform.position.x - 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask(layer));
+            RaycastHit2D rayhit3 = Physics2D.Raycast(new Vector2(transform.position.x + 0.75f, transform.position.y), Vector2.down, 1.2f, LayerMask.GetMask(layer));
             if (rayhit.collider != null || rayhit2.collider != null || rayhit3.collider != null)
             {
                 jump = JumpMax;

@@ -24,7 +24,12 @@ public class Enemy_SwordSkel : EnemyBase
         base.Update();
         if (agro)
         {
-            RaycastHit2D cast = Physics2D.BoxCast(transform.position + (left ? Vector3.left : Vector3.right), Vector3.one * 1.7f, 90, Vector3.zero, 0, LayerMask.GetMask("Player"));
+            string[] layer = new string[2]
+            {
+                "Player",
+                "PlayerDash"
+            };
+            RaycastHit2D cast = Physics2D.BoxCast(transform.position + (left ? Vector3.left : Vector3.right), Vector3.one * 1.7f, 90, Vector3.zero, 0, LayerMask.GetMask(layer));
             if (cast.collider != null && cast.transform.tag == "Player" && !attacking)
             {
                 attacking = true;
