@@ -257,6 +257,20 @@ public class PlayerInven : MonoBehaviour
                 AttackSpeed = 1.54f
             }
         };
+        Item threedanbong = new Item()
+        {
+            ItemText = "Three-TieredBaton",
+            category = ItemSlot.Category.MainWeapon,
+            Description = "\"호신용으로 사용되는, 3단으로 접히는 단봉\"",
+            Name = "삼단봉",
+            rank = Rank.Rare,
+            Stat = new StatBonus()
+            {
+                MinDmg = 8,
+                MaxDmg = 9,
+                AttackSpeed = 3.85f
+            }
+        };
         Item chainchestplate = new Item()
         {
             ItemText = "ChainArmor",
@@ -270,11 +284,12 @@ public class PlayerInven : MonoBehaviour
                 SpeedPer = -5
             }
         };
-        Item item2 = shortsword.Copy();
-        item2.AddStat.Add(new StatBonus() { Power = 100, SpeedPer = 100, AttackSpeedPer = 100 });
-        AddItem(item2);
+        Item item2 = threedanbong.Copy();
+        item2.AddStat.Add(new StatBonus() { Crit = 5, Power = 25 });
+        AddItem(shortsword.Copy());
         GameObject.Find("DropItem_ChainArmor").GetComponent<DropItem>().item = chainchestplate.Copy();
         GameObject.Find("BasicTreasure").GetComponent<ChestBase>().item = greatsword.Copy();
+        GameObject.Find("BlueTreasure").GetComponent<ChestBase>().item = item2;
     }
 
     public enum Hand

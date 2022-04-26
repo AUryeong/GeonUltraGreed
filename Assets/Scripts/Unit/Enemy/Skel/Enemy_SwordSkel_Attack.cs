@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Skel_Attack : MonoBehaviour
+public class Enemy_SwordSkel_Attack : MonoBehaviour
 {
     [SerializeField]
-    Enemy_Skel enemy_Skel;
+    Enemy_SwordSkel enemy_Skel;
     void Attack()
     {
         enemy_Skel.Attack();

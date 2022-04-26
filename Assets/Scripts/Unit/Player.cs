@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : UnitBase
 {
     [SerializeField]
-    private GameObject sprite;
+    private SpriteRenderer sprite;
     [SerializeField]
     private GameObject Dashsprite;
     [SerializeField]
@@ -62,14 +62,17 @@ public class Player : UnitBase
     int jumpadd;
     int AttackIndex;
     float attackCooltime;
+    float hurtinv;
     List<UnitBase> DashDamageUnits = new List<UnitBase>();
     public GameObject FButton;
     public FButtonUnitBase FButtonUnit;
+    BoxCollider2D colider2d;
 
     protected override void Start()
     {
         jump = JumpMax;
         Inven.Init();
+        colider2d = GetComponent<BoxCollider2D>();
         StatChange();
     }
     
@@ -95,12 +98,25 @@ public class Player : UnitBase
         return !Inven.gameObject.activeSelf;
     }
 
+    public float GetDefenseDamage()
+    {
+        return stat.Defense / 100;
+    }
+
     public override void Damaged(float damage)
     {
-        damage -= damage * stat.Defense / 100;
-        damage -= stat.Strong;
-        base.Damaged(damage <0 ? 0 : damage);
-        GameManager.Instance.HealthChange();
+        if (hurtinv <= 0)
+        {
+            damage -= damage * GetDefenseDamage();
+            damage -= stat.Strong;
+            base.Damaged(damage < 0 ? 0 : damage);
+            GameManager.Instance.HealthChange();
+            GameManager.Instance.CameraEarthQuake(0.3f, 0.165f, 0.131f);
+            hurtinv = 0.7f;
+            sprite.color = new Color(1, 1, 1, 0.7f);
+            AttackSprite.color = new Color(1, 1, 1, 0.7f);
+        }
+        
     }
 
     void CheckMoving(float deltaTime)
@@ -187,41 +203,41 @@ public class Player : UnitBase
         if (Dashing2 > 0)
         {
             Dashing2 -= deltaTime;
-            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, new Vector2(1.8f, 1.8f), 0, Dashing, 0.25f, LayerMask.GetMask("Platform"));
-            if (rayhit.collider == null)
+            RaycastHit2D[] rayhit2 = Physics2D.BoxCastAll(Player.Instance.transform.position, new Vector2(2.5f, 2.5f), 0, Player.Instance.Dashing, 0.25f, LayerMask.GetMask("Enemy"));
+
+            for (int i = 0; i < rayhit2.Length; i++)
             {
-                Rigid.velocity = new Vector2(0, 0);
-                transform.Translate(Dashing * deltaTime);
-                RaycastHit2D[] rayhit2 = Physics2D.BoxCastAll(Player.Instance.transform.position, new Vector2(2.5f, 2.5f), 0, Player.Instance.Dashing, 0.25f, LayerMask.GetMask("Enemy"));
-               
-                for(int i = 0; i < rayhit2.Length; i++)
+                if (rayhit2[i].collider != null)
                 {
-                    if (rayhit2[i].collider != null)
+                    EnemyBase unit = rayhit2[i].collider.gameObject.GetComponent<EnemyBase>();
+                    if (unit != null && !DashDamageUnits.Contains(unit))
                     {
-                        EnemyBase unit = rayhit2[i].collider.gameObject.GetComponent<EnemyBase>();
-                        if (unit != null && !DashDamageUnits.Contains(unit))
-                        {
-                            DashDamageUnits.Add(unit);
-                            StatBonus stat = Player.Instance.Stat;
-                            unit.Damaged((Random.Range(stat.MinDmg, stat.MaxDmg + 1f)) * (100 + stat.Power) / 100 * stat.DashDmgPer / 100);
-                        }
+                        DashDamageUnits.Add(unit);
+                        StatBonus stat = Player.Instance.Stat;
+                        unit.Damaged((Random.Range(stat.MinDmg, stat.MaxDmg + 1f)) * (100 + stat.Power) / 100 * stat.DashDmgPer / 100);
                     }
                 }
-                if (Dashing2 <= 0)
-                {
-                    Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
-                }
-                if (Dashing2 < 0.05f && !Dashjansang)
-                {
-                    GameObject obj = PoolManager.Instance.Init(Dashsprite, 0.2f);
-                    obj.transform.position = sprite.transform.position;
-                    Dashjansang = true;
-                }
+            }
+            RaycastHit2D rayhit = Physics2D.BoxCast(Rigid.position, colider2d.size, 0, Dashing, 0.25f, LayerMask.GetMask("Platform"));
+            if (rayhit.collider == null)
+            {
+                Rigid.velocity = new Vector2(0, 5);
+                transform.Translate(Dashing * deltaTime);
+            }
+            if (Dashing2 <= 0)
+            {
+                Rigid.AddForce(new Vector2(Dashing.x, Dashing.y * 10));
+            }
+            if (Dashing2 < 0.05f && !Dashjansang)
+            {
+                GameObject obj = PoolManager.Instance.Init(Dashsprite, 0.2f);
+                obj.transform.position = sprite.transform.position;
+                Dashjansang = true;
             }
         }
         if (Input.GetMouseButtonDown(1) && Dash > 0)
         {
-            Rigid.velocity = new Vector2(0, 0);
+            Rigid.velocity = new Vector2(0, 5);
             Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float angle = Mathf.Atan2(mouse.y - transform.position.y, mouse.x - transform.position.x) * Mathf.Rad2Deg;
             Vector3 vector2 = Quaternion.AngleAxis(angle - 45, Vector3.forward) * Vector3.one * 20;
@@ -284,6 +300,20 @@ public class Player : UnitBase
         CheckJumped();
         CheckHandChanged();
         CheckMainItem();
+        CheckTime(time);
+    }
+
+    void CheckTime(float deltaTime)
+    {
+        if(hurtinv > 0)
+        {
+            hurtinv -= deltaTime;
+            if(hurtinv <= 0)
+            {
+                sprite.color = new Color(1, 1, 1, 1);
+                AttackSprite.color = new Color(1, 1, 1, 1);
+            }
+        }
     }
 
     void CheckMainItem()
@@ -351,22 +381,20 @@ public class Player : UnitBase
                                 {
                                     enemy.Damaged((Random.Range(stat.MinDmg, stat.MaxDmg)) * (100 + stat.Power) / 100);
                                     GameObject obj2 = PoolManager.Instance.Init(Resources.Load<GameObject>("FX/" + item.HitEffect));
-                                    Vector2 size = enemy.GetComponent<BoxCollider2D>().size;
-                                    float f = (size.x > size.y) ? size.y : size.x;
-                                    obj2.transform.localScale = new Vector3(f, f, f);
-                                    obj2.transform.position = enemy.transform.position;
-                                    obj2.transform.localRotation = gameObject.transform.localRotation;
+                                    if(obj2 != null)
+                                    {
+                                        Vector2 size = enemy.GetComponent<BoxCollider2D>().size;
+                                        float f = (size.x > size.y) ? size.y : size.x;
+                                        obj2.transform.localScale = new Vector3(f, f, f);
+                                        obj2.transform.position = enemy.transform.position;
+                                        obj2.transform.localRotation = gameObject.transform.localRotation;
+                                    }
                                 }
                             }
                         }
                     }
                     attackCooltime = 1 / stat.AttackSpeed;
-                    CameraFilter_EarthQuake quake = Camera.main.gameObject.AddComponent<CameraFilter_EarthQuake>();
-                    quake.X = 0.1f;
-                    quake.Y = 0.055f;
-                    AutoScriptDestruct a = Camera.main.gameObject.AddComponent<AutoScriptDestruct>();
-                    a.targetScript = quake;
-                    a.time = 0.1f;
+                    GameManager.Instance.CameraEarthQuake(0.1f, 0.055f, 0.1f);
                 }
             }
             float lastangle = angle + (AttackIndex * ((Mathf.Abs(angle) > 90) ? -135 : 135));

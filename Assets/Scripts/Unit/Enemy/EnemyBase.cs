@@ -18,6 +18,12 @@ public class EnemyBase : UnitBase
     protected Color color;
     protected float hitu;
     protected bool left;
+    public int money;
+    public int randommoney;
+
+    [SerializeField]
+    protected float checkmovetime;
+    protected float checkmovecooltime;
 
     protected virtual void CheckHpUI(float deltaTime)
     {
@@ -40,23 +46,39 @@ public class EnemyBase : UnitBase
         }
     }
 
+    protected virtual void CheckDirection(float deltaTime)
+    {
+
+        checkmovecooltime += deltaTime;
+        if (checkmovecooltime >= checkmovetime)
+        {
+            checkmovecooltime = 0;
+            if (Player.Instance.transform.position.x - transform.position.x > 0)
+            {
+                left = false;
+                transform.localScale = Vector3.one;
+                spriteRenderer.transform.parent.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                left = true;
+                transform.localScale = new Vector3(-1, 1, 1);
+                spriteRenderer.transform.parent.localScale = Vector3.one;
+            }
+        }
+    }
+
     protected virtual void CheckMove(float deltaTime)
     {
         if (agro)
         {
-            if (Player.Instance.transform.position.x - transform.position.x > 0)
+            if (left)
             {
-                transform.localScale = Vector3.one;
-                spriteRenderer.transform.parent.localScale = new Vector3(-1, 1, 1);
-                transform.Translate(Vector3.right * deltaTime * Speed);
-                left = false;
+                transform.Translate(Vector3.left * deltaTime * Speed);
             }
             else
             {
-                transform.localScale = new Vector3(-1, 1, 1);
-                spriteRenderer.transform.parent.localScale = Vector3.one;
-                transform.Translate(Vector3.left * deltaTime * Speed);
-                left = true;
+                transform.Translate(Vector3.right * deltaTime * Speed);
             }
         }
     }
@@ -87,6 +109,7 @@ public class EnemyBase : UnitBase
         }
         CheckMove(deltaTime);
         CheckAgro();
+        CheckDirection(deltaTime);
         if (hitu > 0 && hitred)
         {
             hitu -= deltaTime;
@@ -125,6 +148,23 @@ public class EnemyBase : UnitBase
         float f = ((gameObject.GetComponent<BoxCollider2D>().size.x > gameObject.GetComponent<BoxCollider2D>().size.y) ? gameObject.GetComponent<BoxCollider2D>().size.x : gameObject.GetComponent<BoxCollider2D>().size.y);
         obj.transform.localScale = new Vector3(f, f, f);
         obj.transform.position = gameObject.transform.position;
+        int getmoney = money + Random.Range(0, randommoney + 1);
+        int billion = getmoney / 100;
+        int coin = (getmoney % 100) / 10;
+        for (int i = 0; i < billion; i++)
+        {
+            GameObject billionobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropBullion"));
+            billionobj.transform.position = transform.position;
+            billionobj.GetComponent<DropGold>().getgold = 0.4f;
+            billionobj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
+        }
+        for (int i = 0; i < coin; i++)
+        {
+            GameObject coinobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropGold"));
+            coinobj.transform.position = transform.position;
+            coinobj.GetComponent<DropGold>().getgold = 0.4f;
+            coinobj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
+        }
     }
     protected virtual void FixedUpdate()
     {

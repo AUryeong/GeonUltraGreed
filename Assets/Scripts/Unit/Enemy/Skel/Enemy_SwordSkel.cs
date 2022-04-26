@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Skel : EnemyBase
+public class Enemy_SwordSkel : EnemyBase
 {
     [SerializeField]
     private Animator swordanimator;
@@ -16,6 +16,7 @@ public class Enemy_Skel : EnemyBase
         base.Start();
         animator = GetComponent<Animator>();
         attacking = false;
+        Speed = Speed * Random.Range(0.9f, 1.1f);
     }
 
     protected override void Update()
@@ -28,7 +29,7 @@ public class Enemy_Skel : EnemyBase
             {
                 attacking = true;
                 swordanimator.SetTrigger("Slash");
-                animator.SetBool("isWalking", true);
+                animator.SetBool("isWalking", false);
             }
         }
     }
@@ -38,6 +39,14 @@ public class Enemy_Skel : EnemyBase
         if (!attacking)
         {
             base.CheckMove(deltaTime);
+        }
+    }
+
+    protected override void CheckDirection(float deltaTime)
+    {
+        if (!attacking)
+        {
+            base.CheckDirection(deltaTime);
         }
     }
 
@@ -60,6 +69,6 @@ public class Enemy_Skel : EnemyBase
     public void EndAttack()
     {
         attacking = false;
-        animator.SetBool("isWalking", false);
+        animator.SetBool("isWalking", true);
     }
 }

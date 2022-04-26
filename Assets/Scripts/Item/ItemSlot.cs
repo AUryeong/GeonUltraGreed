@@ -140,7 +140,6 @@ public class ItemSlot : UISlot
                 {
                     Item item2 = slot.item;
                     Item ATM = item;
-                    Player.Instance.StatChange();
                     if (slot.SetableItem(ATM) && SetableItem(item2))
                     {
                         slot.SetItem(ATM);
@@ -162,6 +161,7 @@ public class ItemSlot : UISlot
                             SetItem(null);
                         }
                     }
+                    Player.Instance.StatChange();
                 }
             }
         }

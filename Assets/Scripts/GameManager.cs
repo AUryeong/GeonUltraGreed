@@ -40,6 +40,16 @@ public class GameManager : Singleton<GameManager>
 	public DropItem dropitem;
 	int Dashcount;
 	Player player;
+
+	public void CameraEarthQuake(float X, float Y, float time)
+    {
+		CameraFilter_EarthQuake quake = Camera.main.gameObject.AddComponent<CameraFilter_EarthQuake>();
+		quake.X = X;
+		quake.Y = Y;
+		AutoScriptDestruct a = Camera.main.gameObject.AddComponent<AutoScriptDestruct>();
+		a.targetScript = quake;
+		a.time = time;
+	}
 	protected override void Awake()
 	{
 		base.Awake();
