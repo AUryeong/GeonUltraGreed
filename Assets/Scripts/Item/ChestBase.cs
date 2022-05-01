@@ -29,19 +29,23 @@ public class ChestBase : FButtonUnitBase
             int coin = (getmoney % 100) / 10;
             for(int i = 0; i < billion; i++)
             {
-                GameObject billionobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropBullion"));
-                billionobj.transform.position = transform.position;
-                billionobj.GetComponent<DropGold>().getgold = 0.4f;
-                billionobj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle* 800);
+                GameObject billionobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropBullion")); 
+                Idong(billionobj);
+
             }
             for (int i = 0; i < coin; i++)
             {
                 GameObject coinobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropGold"));
-                coinobj.transform.position = transform.position;
-                coinobj.GetComponent<DropGold>().getgold = 0.4f;
-                coinobj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
+                Idong(coinobj);
             }
         }
+    }
+
+    void Idong(GameObject obj)
+    {
+        obj.transform.position = transform.position + new Vector3(0, 0.1f, 0);
+        obj.GetComponent<DropGold>().getgold = 0.4f;
+        obj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
     }
     
     protected override bool CanShowF()

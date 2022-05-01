@@ -154,14 +154,14 @@ public class EnemyBase : UnitBase
         for (int i = 0; i < billion; i++)
         {
             GameObject billionobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropBullion"));
-            billionobj.transform.position = transform.position;
+            billionobj.transform.position = transform.position + new Vector3(0, 0.1f, 0);
             billionobj.GetComponent<DropGold>().getgold = 0.4f;
             billionobj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
         }
         for (int i = 0; i < coin; i++)
         {
             GameObject coinobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropGold"));
-            coinobj.transform.position = transform.position;
+            coinobj.transform.position = transform.position + new Vector3(0, 0.1f, 0);
             coinobj.GetComponent<DropGold>().getgold = 0.4f;
             coinobj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
         }

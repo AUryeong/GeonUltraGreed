@@ -394,7 +394,7 @@ public class Player : UnitBase
                                         float f = (size.x > size.y) ? size.y : size.x;
                                         obj2.transform.localScale = new Vector3(f, f, f);
                                         obj2.transform.position = enemy.transform.position;
-                                        obj2.transform.localRotation = gameObject.transform.localRotation;
+                                        obj2.transform.rotation = obj.transform.rotation;
                                     }
                                 }
                             }
