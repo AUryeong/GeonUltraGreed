@@ -213,8 +213,18 @@ public class Player : UnitBase
                     if (unit != null && !DashDamageUnits.Contains(unit))
                     {
                         DashDamageUnits.Add(unit);
-                        StatBonus stat = Player.Instance.Stat;
-                        unit.Damaged((Random.Range(stat.MinDmg, stat.MaxDmg + 1f)) * (100 + stat.Power) / 100 * stat.DashDmgPer / 100);
+                        StatBonus stat = Stat;
+                        float damage = (Random.Range(stat.MinDmg, stat.MaxDmg)) * (100 + stat.Power) / 100 * stat.DashDmgPer / 100;
+                        if (stat.Crit >= Random.Range(0f, 100f))
+                        {
+                            damage = (Random.Range(stat.MinDmg, stat.MaxDmg) ) * 2 * (100 + stat.Power) / 100 * stat.DashDmgPer / 100;
+                            GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), unit.transform.position, Color.yellow);
+                        }
+                        else
+                        {
+                            GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), unit.transform.position, Color.white);
+                        }
+                        unit.Damaged(damage);
                     }
                 }
             }
@@ -386,7 +396,17 @@ public class Player : UnitBase
                                 EnemyBase enemy = array[i].collider.gameObject.GetComponent<EnemyBase>();
                                 if (enemy != null)
                                 {
-                                    enemy.Damaged((Random.Range(stat.MinDmg, stat.MaxDmg)) * (100 + stat.Power) / 100);
+                                    float damage = (Random.Range(stat.MinDmg, stat.MaxDmg )) * (100 + stat.Power) / 100;
+                                    if (stat.Crit >= Random.Range(0f, 100f))
+                                    {
+                                        damage = (Random.Range(stat.MinDmg, stat.MaxDmg) * 2) * (100 + stat.Power) / 100;
+                                        GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), enemy.transform.position, Color.yellow);
+                                    }
+                                    else
+                                    {
+                                        GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), enemy.transform.position, Color.white);
+                                    }
+                                    enemy.Damaged(damage);
                                     GameObject obj2 = PoolManager.Instance.Init(Resources.Load<GameObject>("FX/" + item.HitEffect));
                                     if(obj2 != null)
                                     {

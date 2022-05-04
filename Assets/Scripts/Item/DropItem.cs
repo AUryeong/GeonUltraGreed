@@ -5,17 +5,17 @@ using UnityEngine;
 public class DropItem : MonoBehaviour
 {
     public Item item;
-    public float getitem;
-    void Update()
+    public bool getitem;
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(getitem > 0)
+        if (!getitem && collision != null && collision.collider != null && (collision.collider.gameObject.layer == LayerMask.NameToLayer("Platform") || collision.collider.gameObject.layer == LayerMask.NameToLayer("Floatform")))
         {
-            getitem -= Time.deltaTime;
+            getitem = true;
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision != null && collision.gameObject != null && collision.gameObject.name == "Player Event" && getitem <= 0)
+        if(getitem && collision != null && collision.gameObject != null && collision.gameObject.name == "Player Event")
         {
             Player.Instance.Inven.AddItem(item);
             IWManager.Instance.ShowItem(item);

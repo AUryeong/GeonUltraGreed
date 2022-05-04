@@ -20,7 +20,7 @@ public class ChestBase : FButtonUnitBase
             GetComponent<SpriteRenderer>().sprite = opensprite;
             GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropItem"));
             obj.GetComponent<DropItem>().ShowItem(item);
-            obj.GetComponent<DropItem>().getitem = 0.4f;
+            obj.GetComponent<DropItem>().getitem = false;
             obj.transform.position = transform.position;
             obj.name = "DropItem_" + item.ItemText;
             obj.GetComponent<Rigidbody2D>().AddForce(Vector3.up * 400);
@@ -44,7 +44,7 @@ public class ChestBase : FButtonUnitBase
     void Idong(GameObject obj)
     {
         obj.transform.position = transform.position + new Vector3(0, 0.1f, 0);
-        obj.GetComponent<DropGold>().getgold = 0.4f;
+        obj.GetComponent<DropGold>().getgold = false;
         obj.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle * 800);
     }
     
