@@ -38,6 +38,8 @@ public class ChestBase : FButtonUnitBase
                 GameObject coinobj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropGold"));
                 Idong(coinobj);
             }
+            Player.Instance.FButtonUnit = null;
+            Player.Instance.FButton.gameObject.SetActive(false);
         }
     }
 

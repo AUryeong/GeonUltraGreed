@@ -57,7 +57,12 @@ public class Enemy_SwordSkel : EnemyBase
 
     public void Attack()
     {
-        RaycastHit2D[] array = Physics2D.BoxCastAll(transform.position + (left ? Vector3.left : Vector3.right), Vector3.one * 2f, 90, Vector3.zero, 0, LayerMask.GetMask("Player"));
+        string[] layer = new string[2]
+        {
+                "Player",
+                "PlayerDash"
+        };
+        RaycastHit2D[] array = Physics2D.BoxCastAll(transform.position + (left ? Vector3.left : Vector3.right), Vector3.one * 2f, 90, Vector3.zero, 0, LayerMask.GetMask(layer));
         for (int i = 0; i < array.Length; i++)
         {
             if (array[i].collider != null && array[i].transform.tag == "Player")

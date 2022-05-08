@@ -121,15 +121,15 @@ public class EnemyBase : UnitBase
         }
     }
 
-    public override void Damaged(float damage)
+    public override bool Damaged(float damage)
     {
-        base.Damaged(damage);
         if (hitred)
         {
             _spriteRenderer.color = new Color(255, 0, 0);
             hitu = 0.05f;
         }
         hitui = 2;
+        return base.Damaged(damage);
     }
     protected override void Start()
     {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Player : UnitBase
 {
@@ -10,6 +11,8 @@ public class Player : UnitBase
     private GameObject Dashsprite;
     [SerializeField]
     private SpriteRenderer AttackSprite;
+    [SerializeField]
+    private SpriteRenderer subsprite;
     public PlayerInven Inven;
 
     private Rigidbody2D rigid;
@@ -64,9 +67,11 @@ public class Player : UnitBase
     float attackCooltime;
     float hurtinv;
     List<UnitBase> DashDamageUnits = new List<UnitBase>();
-    public GameObject FButton;
+    public SpriteRenderer FButton;
     public FButtonUnitBase FButtonUnit;
     BoxCollider2D colider2d;
+    PlatformEffector2D effector2D;
+    Coroutine coroutine;
 
     protected override void Start()
     {
@@ -93,30 +98,41 @@ public class Player : UnitBase
         return statBonus;
     }
 
+    
     public bool IsActable()
     {
-        return !Inven.gameObject.activeSelf;
+        return !Inven.gameObject.activeSelf && !DialogManager.Instance.Dialoging();
     }
 
-    public float GetDefenseDamage()
-    {
-        return stat.Defense / 100;
-    }
 
-    public override void Damaged(float damage)
+    public override bool Damaged(float damage)
     {
         if (hurtinv <= 0)
         {
-            damage -= damage * GetDefenseDamage();
+            if(stat.Evade >= Random.Range(0f, 100f))
+            {
+                GameManager.Instance.ShowBoundText("EVADE", transform.position, Color.green);
+                return false;
+            }
+            if (stat.Blocking >= Random.Range(0f, 100f))
+            {
+                GameManager.Instance.ShowBoundText("BLOCKING", transform.position, Color.blue);
+                hurtinv = 0.7f;
+                return false;
+            }
+            damage -= damage * stat.Defense / 100;
             damage -= stat.Strong;
             base.Damaged(damage < 0 ? 0 : damage);
             GameManager.Instance.HealthChange();
             GameManager.Instance.CameraEarthQuake(0.3f, 0.165f, 0.131f);
             hurtinv = 0.7f;
             sprite.color = new Color(1, 1, 1, 0.7f);
-            AttackSprite.color = new Color(1, 1, 1, 0.7f);
+            return true;
         }
-        
+        else
+        {
+            return false;
+        }
     }
 
     void CheckMoving(float deltaTime)
@@ -150,6 +166,9 @@ public class Player : UnitBase
         Vector3 vector2 = AttackSprite.transform.localPosition;
         float x = Mathf.Abs(vector2.x);
         AttackSprite.transform.localPosition = new Vector3((vector.x < 0) ? -x : x, vector2.y, 0);
+        vector2 = subsprite.transform.localPosition;
+        x = Mathf.Abs(vector2.x);
+        subsprite.transform.localPosition = new Vector3((vector.x > 0) ? -x : x, vector2.y, 0);
     }
 
     void CheckHandChanged()
@@ -158,6 +177,7 @@ public class Player : UnitBase
         {
             Inven.hand = (PlayerInven.Hand)(((int)Inven.hand + 1) % 2);
             StatChange();
+            GameManager.Instance.EquipWeaponChange((int)Inven.hand);
         }
     }
 
@@ -167,6 +187,22 @@ public class Player : UnitBase
         {
             if (jump != 0 && jumpadd == 0 && !jumping)
             {
+                if (effector2D != null && (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)))
+                {
+                    string[] layer = new string[2]
+                    {
+                "Enemy",
+                "DropItem"
+                    };
+                    effector2D.colliderMask = LayerMask.GetMask(layer);
+                    if (coroutine != null)
+                        StopCoroutine(coroutine);
+                    coroutine = StartCoroutine(EffectorDead(effector2D));
+                    effector2D = null;
+                    jumping = true;
+                    jump--;
+                    return;
+                }
                 jump--;
                 jumpadd = 20;
                 jumping = true;
@@ -194,16 +230,63 @@ public class Player : UnitBase
         if (FButtonUnit != null && Input.GetKeyDown(KeyCode.F))
         {
             FButtonUnit.OnF();
-            FButton.gameObject.SetActive(false);
         }
     }
 
+    IEnumerator EffectorDead(PlatformEffector2D platformEffector2D)
+    {
+        float duration = 0.4f;
+        while(duration > 0)
+        {
+            duration -= Time.deltaTime;
+            yield return null;
+        }
+        string[] layer = new string[3]
+        {
+                "Player",
+                "Enemy",
+                "DropItem"
+        };
+        platformEffector2D.colliderMask = LayerMask.GetMask(layer);
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider != null && collision.collider.gameObject.tag == "Float" && effector2D == collision.collider.GetComponent<PlatformEffector2D>())
+        {
+            effector2D = null;
+        }
+    }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.collider != null && collision.collider.gameObject.tag == "Float")
+        {
+            effector2D = collision.collider.GetComponent<PlatformEffector2D>();
+        }
+    }
+
+    private float Damage(Vector3 position, float multiplier = 1)
+    {
+        float damage = (Random.Range(stat.MinDmg, stat.MaxDmg)) * (100 + stat.Power) / 100 * multiplier;
+        if (stat.Crit >= Random.Range(0f, 100f))
+        {
+            damage *= 2;
+            damage += stat.FixedDamage;
+            GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), position, Color.yellow);
+        }
+        else
+        {
+            damage += stat.FixedDamage;
+            GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), position, Color.white);
+        }
+        return damage;
+    }
     void CheckDashing(float deltaTime)
     {
         if (Dashing2 > 0)
         {
             Dashing2 -= deltaTime;
-            RaycastHit2D[] rayhit2 = Physics2D.BoxCastAll(Player.Instance.transform.position, new Vector2(2.5f, 2.5f), 0, Player.Instance.Dashing, 0.25f, LayerMask.GetMask("Enemy"));
+            RaycastHit2D[] rayhit2 = Physics2D.BoxCastAll(transform.position, new Vector2(2.5f, 2.5f), 0, Dashing, 0.25f, LayerMask.GetMask("Enemy"));
 
             for (int i = 0; i < rayhit2.Length; i++)
             {
@@ -213,18 +296,7 @@ public class Player : UnitBase
                     if (unit != null && !DashDamageUnits.Contains(unit))
                     {
                         DashDamageUnits.Add(unit);
-                        StatBonus stat = Stat;
-                        float damage = (Random.Range(stat.MinDmg, stat.MaxDmg)) * (100 + stat.Power) / 100 * stat.DashDmgPer / 100;
-                        if (stat.Crit >= Random.Range(0f, 100f))
-                        {
-                            damage = (Random.Range(stat.MinDmg, stat.MaxDmg) ) * 2 * (100 + stat.Power) / 100 * stat.DashDmgPer / 100;
-                            GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), unit.transform.position, Color.yellow);
-                        }
-                        else
-                        {
-                            GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), unit.transform.position, Color.white);
-                        }
-                        unit.Damaged(damage);
+                        unit.Damaged(Damage(unit.transform.position, stat.DashDmgPer / 100));
                     }
                 }
             }
@@ -356,11 +428,33 @@ public class Player : UnitBase
                 AttackSprite.sprite = sprite;
             }
         }
+        item = Inven.GetHands()[1].item;
+        if (item != null)
+        {
+            Sprite sprite = Resources.Load<Sprite>("Item/" + item.ItemText + "0");
+            if (sprite == null)
+            {
+                sprite = Resources.Load<Sprite>("Item/" + item.ItemText);
+            }
+            if (subsprite.sprite != sprite)
+            {
+                subsprite.sprite = sprite;
+            }
+        }
+        else
+        {
+            Sprite sprite = Resources.Load<Sprite>("Item/None");
+            if (subsprite.sprite != sprite)
+            {
+                subsprite.sprite = sprite;
+            }
+        }
     }
 
     public void StatChange()
     {
         stat = GetStat();
+        GameManager.Instance.UpdateEquipWeapon();
     }
 
     void CheckMainItem(float deltaTime)
@@ -381,7 +475,7 @@ public class Player : UnitBase
                 {
                     AttackIndex++;
                     AttackIndex %= 2;
-                    AttackSprite.sortingOrder = (AttackIndex == 0) ? 2 : 4;
+                    AttackSprite.sortingOrder = (AttackIndex == 0) ? 2 : 5;
                     GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("Swing/" + item.ItemText));
                     if (obj != null)
                     {
@@ -396,17 +490,7 @@ public class Player : UnitBase
                                 EnemyBase enemy = array[i].collider.gameObject.GetComponent<EnemyBase>();
                                 if (enemy != null)
                                 {
-                                    float damage = (Random.Range(stat.MinDmg, stat.MaxDmg )) * (100 + stat.Power) / 100;
-                                    if (stat.Crit >= Random.Range(0f, 100f))
-                                    {
-                                        damage = (Random.Range(stat.MinDmg, stat.MaxDmg) * 2) * (100 + stat.Power) / 100;
-                                        GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), enemy.transform.position, Color.yellow);
-                                    }
-                                    else
-                                    {
-                                        GameManager.Instance.ShowBoundText(Mathf.Round(damage).ToString(), enemy.transform.position, Color.white);
-                                    }
-                                    enemy.Damaged(damage);
+                                    enemy.Damaged(Damage(enemy.transform.position));
                                     GameObject obj2 = PoolManager.Instance.Init(Resources.Load<GameObject>("FX/" + item.HitEffect));
                                     if(obj2 != null)
                                     {

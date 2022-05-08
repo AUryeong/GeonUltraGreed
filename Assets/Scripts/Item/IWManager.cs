@@ -88,7 +88,7 @@ public class IWManager : Singleton<IWManager>
                     stat.MaxDmg = 0;
                     stat.AttackSpeed = 0;
                 }
-                else if (item.category == ItemSlot.Category.Accessory && stat.Defense > 0)
+                else if ((item.category == ItemSlot.Category.Accessory || item.category == ItemSlot.Category.SubWeapon) && stat.Defense > 0)
                 {
                     itemabt.text = "방어력 : <color=#fffc3d>" + stat.Defense;
                     stat.Defense = 0;
@@ -131,7 +131,6 @@ public class IWManager : Singleton<IWManager>
                         break;
                 }
                 lore += "<color=#b1fffc>" + item.Description;
-                stat.Add(item.AddStat);
                 string addstat = "";
                 float f = stat.MinDmg;
                 if (f != 0)
@@ -177,6 +176,46 @@ public class IWManager : Singleton<IWManager>
                 if (f != 0)
                 {
                     addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + "%" + ColorManager.RankWhite + " 크리티컬 대미지\n";
+                }
+                f = stat.Evade;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + ColorManager.RankWhite + " 회피\n";
+                }
+                f = stat.Strong;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + ColorManager.RankWhite + " 강인함\n";
+                }
+                f = stat.DashDmgPer;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + "%" + ColorManager.RankWhite + " 대쉬 공격력\n";
+                }
+                f = stat.Blocking;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + ColorManager.RankWhite + " 막기\n";
+                }
+                f = stat.ReloadSpeed;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + ColorManager.RankWhite + " 재장전 속도\n";
+                }
+                f = stat.ReloadSpeedPer;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + "%" + ColorManager.RankWhite + " 재장전 속도\n";
+                }
+                f = stat.FixedDamage;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + ColorManager.RankWhite + " 고정 대미지\n";
+                }
+                f = stat.GoldBonusPer;
+                if (f != 0)
+                {
+                    addstat += (f < 0 ? ColorManager.BufJupduRed : ColorManager.BufJupduGreen) + f + "%" + ColorManager.RankWhite + " 골드 획득량\n";
                 }
                 itemlore.text = addstat + lore;
                 window.position = slot.GetComponent<RectTransform>().position;

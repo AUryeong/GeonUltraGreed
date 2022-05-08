@@ -12,10 +12,10 @@ public class UnitBase : MonoBehaviour
     {
         Hp = MaxHp;
     }
-    public virtual void Damaged(float damage)
+    public virtual bool Damaged(float damage)
     {
         Hp -= damage;
-
+        return true;
     }
 
    protected virtual void Update()

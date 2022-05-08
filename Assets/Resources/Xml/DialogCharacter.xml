@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DialogCharacterRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Character ID="Envyrok">
+		<DialogList ID="1">
+			<Dialog>
+				<Name>엔비록</Name>
+				<Text>누구냐!</Text>
+			</Dialog>
+			<Dialog>
+				<Name>엔비록</Name>
+				<Text>? 본 적 없는 거 같은 얼굴이군</Text>
+			</Dialog>
+			<Dialog>
+				<Name>엔비록</Name>
+				<Text>난 날 여기로 내쫓은 &lt;#ffEE00&gt;플레이어&lt;#ffffff&gt;란 자에게 복수할거다</Text>
+			</Dialog>
+			<Dialog>
+				<Name>엔비록</Name>
+				<Text>너도 뜻을 같이할 생각이 있나?</Text>
+				<ChooseList>
+					<Choose Text="그렇다">
+						<Dialog>
+							<Name>엔비록</Name>
+							<Text>좋다, 우리 팀원을 소개해주지.</Text>
+						</Dialog>
+					</Choose>
+					<Choose Text="없다">
+						<Dialog>
+							<Name>엔비록</Name>
+							<Text>다시 한번 더 묻겠다, 뜻을 같이 하겠는가?</Text>
+							<ChooseList>
+								<Choose Text="그렇다">
+									<Dialog>
+										<Name>엔비록</Name>
+										<Text>좋다, 우리 팀원을 소개해주지.</Text>
+									</Dialog>
+								</Choose>
+								<Choose Text="없다">
+									<Dialog>
+										<Name>엔비록</Name>
+										<Text>아쉽게 됬군, 여기서 죽어줘야겠다.</Text>
+									</Dialog>
+								</Choose>
+							</ChooseList>
+						</Dialog>
+					</Choose>
+				</ChooseList>
+			</Dialog>
+		</DialogList>
+	</Character>
+</DialogCharacterRoot>

@@ -8,15 +8,24 @@ using UnityEngine.Serialization;
 
 public class ClickableSlot : UISlot
 {
-    [FormerlySerializedAs("Left Click")]
     [SerializeField]
     private Button.ButtonClickedEvent OnLeftClick = new Button.ButtonClickedEvent();
+
+    private Action action;
+
 
     public override void OnPointerClick(PointerEventData data)
     {
         if (data.button == PointerEventData.InputButton.Left)
         {
-            OnLeftClick.Invoke();
+            if(OnLeftClick != null)
+            {
+                OnLeftClick.Invoke();
+            }
+            if (action != null)
+            {
+                action.Invoke();
+            }
         }
     }
 }

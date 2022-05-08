@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ItemListRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Item ID="ShortSword">
+		<Name>숏 소드</Name>
+		<Lore>"가볍고 휘두르기 편한 검"</Lore>
+		<Stat MinDmg="8" MaxDmg="10" AttackSpeed="3.03" />
+	</Item>
+	<Item ID="HeaterShield">
+		<Name>히터 쉴드</Name>
+		<Lore>"세컨드 쉴드"</Lore>
+		<Category>SubWeapon</Category>
+		<Stat Defense="20" Blocking="100" />
+	</Item>
+	<Item ID="Three-TieredBaton">
+		<Name>삼단봉</Name>
+		<Lore>"호신용으로 사용되는, 3단으로 접히는 단봉"</Lore>
+		<Rank>Rare</Rank>
+		<Stat MinDmg="8" MaxDmg="9" AttackSpeed="4.85" />
+	</Item>
+	<Item ID="ChainArmor">
+		<Name>사슬갑옷</Name>
+		<Lore>"가볍지만, 소리가 커서 발걸음이 위축되는 갑옷"</Lore>
+		<Category>Accessory</Category>
+		<Stat Defense="11" SpeedPer="-5" />
+	</Item>
+</ItemListRoot>

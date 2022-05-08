@@ -16,6 +16,9 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     Image image;
 
+    public bool select = false;
+
+
     protected virtual void Awake()
     {
         if(gibon == null)
@@ -48,9 +51,11 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public virtual void OnPointerEnter(PointerEventData data)
     {
         image.sprite = selected;
+        select = true;
     }
     public virtual void OnPointerExit(PointerEventData data)
     {
         image.sprite = gibon;
+        select = false;
     }
 }

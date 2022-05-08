@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class FButtonUnitBase : MonoBehaviour
 {
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    float distance;
+    protected virtual void Start()
     {
-        if (collision != null && collision.gameObject != null && collision.gameObject.name == "Player Event2" && CanShowF())
+        Vector2 vector = GetComponent<SpriteRenderer>().size;
+        distance = vector.x*2;
+    }
+    protected virtual void Update()
+    {
+        Player player = Player.Instance;
+        if (player.FButtonUnit != this && CanShowF() && Vector2.Distance(player.transform.position, transform.position) < distance)
         {
-            Player.Instance.FButton.SetActive(true);
-            Player.Instance.FButton.transform.position = GetComponent<Rigidbody2D>().position + GetComponent<BoxCollider2D>().offset + new Vector2(0, gameObject.GetComponent<BoxCollider2D>().size.y + 0.6f);
-            Player.Instance.FButtonUnit = this;
+            player.FButton.gameObject.SetActive(true);
+            player.FButton.transform.position = transform.position + (new Vector3(0, GetComponent<SpriteRenderer>().size.y + player.FButton.size.y/2));
+            player.FButtonUnit = this;
+        }
+        else if (player.FButtonUnit == this && Vector2.Distance(player.transform.position, transform.position) >= distance)
+        {
+            player.FButtonUnit = null;
+            player.FButton.gameObject.SetActive(false);
         }
     }
 
@@ -21,13 +33,5 @@ public class FButtonUnitBase : MonoBehaviour
     protected virtual bool CanShowF()
     {
         return true;
-    }
-    protected virtual void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision != null && collision.gameObject != null && collision.gameObject.name == "Player Event2" && Player.Instance.FButtonUnit == this)
-        {
-            Player.Instance.FButtonUnit = null;
-            Player.Instance.FButton.SetActive(false);
-        }
     }
 }

@@ -38,24 +38,54 @@ public class GameManager : Singleton<GameManager>
     [SerializeField]
     List<Image> Dashbars;
 
+    [Header("[UI - EquipWeapon]")]
+    [SerializeField]
+    RectTransform EW1;
+    [SerializeField]
+    Image EW1item;
+    [SerializeField]
+    Image EW1item2;
+    [SerializeField]
+    RectTransform EW2;
+    [SerializeField]
+    Image EW2item;
+    [SerializeField]
+    Image EW2item2;
+
     [Header("UI - ELSE")]
     [SerializeField]
     TextMeshPro boundtext;
     [SerializeField]
-    Transform uptransform;
+    TextMeshProUGUI moneytext;
 
-    public DropItem dropitem;
+    public Map map;
+    public List<CameraFilter_EarthQuake> cameraFilter_EarthQuakes = new List<CameraFilter_EarthQuake>();
     int Dashcount;
     Player player;
 
-    public void CameraEarthQuake(float X, float Y, float time)
+    public void EquipWeaponChange(int i = 0)
     {
-        CameraFilter_EarthQuake quake = Camera.main.gameObject.AddComponent<CameraFilter_EarthQuake>();
-        quake.X = X;
-        quake.Y = Y;
-        AutoScriptDestruct a = Camera.main.gameObject.AddComponent<AutoScriptDestruct>();
-        a.targetScript = quake;
-        a.time = time;
+        RectTransform obj1 = EW1;
+        RectTransform obj2 = EW2;
+        if (i == 0)
+        {
+            obj1 = EW2;
+            obj2 = EW1;
+        }
+        obj2.SetAsLastSibling();
+        obj1.DOAnchorPos(new Vector2(-115.1f, 136.2f), 0.5f).SetEase(Ease.OutQuart);
+        obj2.DOAnchorPos(new Vector2(-140f, 108.75f), 0.5f).SetEase(Ease.OutQuart);
+    }
+
+    
+    public void CameraEarthQuake(float X, float Y, float Time)
+    {
+        cameraFilter_EarthQuakes.Add(new CameraFilter_EarthQuake()
+        {
+            X = X,
+            Y = Y,
+            Time = Time
+        });
     }
     protected override void Awake()
     {
@@ -68,6 +98,100 @@ public class GameManager : Singleton<GameManager>
     void Update()
     {
         CursorChange();
+        CameraControl();
+        UpdateUI();
+    }
+
+    public void UpdateEquipWeapon()
+    {
+        ItemSlot slot = player.Inven.MainWeapon[0];
+        if (slot != null && slot.item != null)
+        {
+            EW1item.sprite = Resources.Load<Sprite>("Item/" + slot.item.ItemText);
+        }
+        else
+        {
+            EW1item.sprite = Resources.Load<Sprite>("Item/None");
+        }
+        EW1item.SetNativeSize();
+        slot = player.Inven.SubWeapon[0];
+        if (slot != null && slot.item != null)
+        {
+            EW1item2.sprite = Resources.Load<Sprite>("Item/" + slot.item.ItemText);
+        }
+        else
+        {
+            EW1item2.sprite = Resources.Load<Sprite>("Item/None");
+        }
+        EW1item2.SetNativeSize();
+        slot = player.Inven.MainWeapon[1];
+        if (slot != null && slot.item != null)
+        {
+            EW2item.sprite = Resources.Load<Sprite>("Item/" + slot.item.ItemText);
+        }
+        else
+        {
+            EW2item.sprite = Resources.Load<Sprite>("Item/None");
+        }
+        EW2item.SetNativeSize();
+        slot = player.Inven.SubWeapon[1];
+        if (slot != null && slot.item != null)
+        {
+            EW2item2.sprite = Resources.Load<Sprite>("Item/" + slot.item.ItemText);
+        }
+        else
+        {
+            EW2item2.sprite = Resources.Load<Sprite>("Item/None");
+        }
+        EW2item2.SetNativeSize();
+    }
+    void UpdateUI()
+    {
+        moneytext.text = Player.Instance.Inven.money.ToString();
+    }
+    void CameraControl()
+    {
+        Vector3 shake = Vector3.zero;
+        if (cameraFilter_EarthQuakes.Count > 0)
+        {
+            List<CameraFilter_EarthQuake> filters = new List<CameraFilter_EarthQuake>();
+            foreach (CameraFilter_EarthQuake cameraFilter in cameraFilter_EarthQuakes)
+            {
+                cameraFilter.Time -= Time.deltaTime;
+                if (cameraFilter.Time <= 0)
+                {
+                    filters.Add(cameraFilter);
+                }
+                else
+                {
+                    Vector2 rand = Random.insideUnitCircle;
+                    shake += new Vector3(rand.x * cameraFilter.X, rand.y * cameraFilter.Y, -10);
+                }
+            }
+            foreach (CameraFilter_EarthQuake cameraFilter in filters)
+            {
+                cameraFilter_EarthQuakes.Remove(cameraFilter);
+            }
+        }
+        Vector3 vector = Player.Instance.transform.position;
+        Vector3 pos = vector;
+        if(vector.x > map.maxvector.x)
+        {
+            pos.x = map.maxvector.x;
+        }
+        else if (vector.x < map.minvector.x)
+        {
+            pos.x = map.minvector.x;
+        }
+        if (vector.y > map.maxvector.y)
+        {
+            pos.y = map.maxvector.y;
+        }
+        else if (vector.y < map.minvector.y)
+        {
+            pos.y = map.minvector.y;
+        }
+        Camera.main.transform.position = pos + new Vector3(0,0,-10) + shake;
     }
 
     IEnumerator BoundTextFadeOut(TextMeshPro tmpro)
@@ -90,7 +214,6 @@ public class GameManager : Singleton<GameManager>
             tmpro.text = s;
             tmpro.color = color;
             gameObject.transform.position = position;
-            gameObject.transform.SetParent(uptransform);
             StartCoroutine(BoundTextFadeOut(tmpro));
         }
     }

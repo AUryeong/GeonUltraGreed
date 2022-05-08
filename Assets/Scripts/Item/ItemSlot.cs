@@ -26,8 +26,6 @@ public class ItemSlot : UISlot
 
     public Item item = null;
 
-    public bool select = false;
-
     public Category category = Category.Inventory;
 
     private PlayerInven Inven
@@ -178,7 +176,6 @@ public class ItemSlot : UISlot
         {
             transform.GetComponentInParent<Image>().sprite = whitesprite;
         }
-        select = true;
     }
     public override void OnPointerExit(PointerEventData data)
     {
@@ -187,7 +184,6 @@ public class ItemSlot : UISlot
         {
             transform.GetComponentInParent<Image>().sprite = defaultsprite;
         }
-        select = false;
     }
     public virtual void SetItem(Item item, bool X = false, bool trigger = false)
     {
