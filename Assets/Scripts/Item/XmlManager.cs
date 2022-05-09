@@ -34,6 +34,7 @@ public class XmlManager : Singleton<XmlManager>
             }
         }
     }
+
     public Item FindItem(string itemname)
     {
         return items.Find((Item x) => x.ItemText == itemname);

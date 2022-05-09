@@ -11,7 +11,7 @@ public class ClickableSlot : UISlot
     [SerializeField]
     private Button.ButtonClickedEvent OnLeftClick = new Button.ButtonClickedEvent();
 
-    private Action action;
+    public Action action;
 
 
     public override void OnPointerClick(PointerEventData data)

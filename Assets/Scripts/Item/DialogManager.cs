@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
+using UnityEngine.UI;
 using System.Xml.Serialization;
 using TMPro;
 
@@ -17,6 +18,19 @@ public class DialogManager : Singleton<DialogManager>
 
     [SerializeField]
     TextMeshProUGUI dialogtext;
+
+    [SerializeField]
+    GameObject chooseuibuttom;
+
+    [SerializeField]
+    GameObject chooseuimiddle;
+
+    [SerializeField]
+    GameObject chooseuiup;
+
+    List<GameObject> objlist = new List<GameObject>();
+
+    Coroutine coroutine;
 
     void Start()
     {
@@ -36,6 +50,29 @@ public class DialogManager : Singleton<DialogManager>
             text = text
         });
     }
+    public List<Dialog> FindDialog(List<Dialog> dialogs, string id)
+    {
+        List<Dialog> result = new List<Dialog>();
+        foreach(Dialog dialog in dialogs)
+        {
+            if(dialog.id == id)
+            {
+                result.Add(dialog);
+            }
+            else if (dialog.chooses != null && dialog.chooses.Count > 0)
+            {
+                foreach(Choose choose in dialog.chooses)
+                {
+                    List<Dialog> dialog2 = FindDialog(choose.dialogs, id);
+                    if(dialog2 != null)
+                    {
+                        result.AddRange(dialog2);
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
     void Update()
     {
@@ -49,7 +86,41 @@ public class DialogManager : Singleton<DialogManager>
                 }
                 dialog = dialogs.Dequeue();
                 dialogname.text = dialog.name;
-                StartCoroutine(DialogTyping());
+                if (dialog.chooses != null && dialog.chooses.Count > 0)
+                {
+                    chooseuibuttom.SetActive(true);
+                    chooseuibuttom.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[dialog.chooses.Count - 1].text;
+                    chooseuibuttom.transform.GetChild(0).GetComponent<ChooseSlot>().slot = dialog.chooses.Count-1;
+                    objlist.Add(chooseuibuttom);
+                    if (dialog.chooses.Count > 2)
+                    {
+                        for (int i = dialog.chooses.Count - 1; i > 1; i--)
+                        {
+                            GameObject obj = PoolManager.Instance.Init(chooseuimiddle);
+                            obj.SetActive(true);
+                            obj.GetComponent<RectTransform>().SetParent(chooseuibuttom.GetComponent<RectTransform>());
+                            obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 96 * (dialog.chooses.Count - i), 0);
+                            obj.GetComponent<RectTransform>().GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[i-1].text;
+                            obj.GetComponent<RectTransform>().GetChild(0).GetComponent<ChooseSlot>().slot = i-1;
+                            objlist.Add(obj);
+                        }
+                    }
+                    chooseuiup.SetActive(true);
+                    chooseuiup.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 96 * (dialog.chooses.Count - 1), 0);
+                    chooseuiup.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[0].text;
+                    chooseuiup.transform.GetChild(0).GetComponent<ChooseSlot>().slot = 0;
+                    objlist.Add(chooseuiup);
+                }
+                else
+                {
+                    chooseuibuttom.SetActive(false);
+                }
+                Dialog.DialogEvent dialogEvent = dialog.dialogEvent;
+                if (dialogEvent != null)
+                {
+                    dialogEvent.Invoke(Dialog.DialogEventType.Start);
+                }
+                coroutine = StartCoroutine(DialogTyping());
             }
             else if (dialogui.activeSelf)
             {
@@ -58,6 +129,26 @@ public class DialogManager : Singleton<DialogManager>
             }
         }
         
+    }
+    public void SelectChoose(int index)
+    {
+        if(dialog.chooses.Count > index)
+        {
+            AddDialog(dialog.chooses[index].dialogs);
+            foreach(GameObject obj in objlist)
+            {
+                obj.SetActive(false);
+            }
+            objlist.Clear();
+            Dialog.DialogEvent dialogEvent = dialog.dialogEvent;
+            if (dialogEvent != null)
+            {
+                dialogEvent.Invoke(Dialog.DialogEventType.End);
+            }
+            if (coroutine != null)
+                StopCoroutine(coroutine);
+            dialog = null;
+        }
     }
 
     IEnumerator DialogTyping()
@@ -82,7 +173,7 @@ public class DialogManager : Singleton<DialogManager>
                         typingindex++;
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Space))
+                if ((Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Space)) && typingindex != 0)
                 {
                     typingindex = dialog.text.Length;
                 }
@@ -91,13 +182,19 @@ public class DialogManager : Singleton<DialogManager>
             {
                 if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Space))
                 {
-                    if(dialog.chooses != null && dialog.chooses.Count > 0)
+                    if (dialog.chooses == null || dialog.chooses.Count <= 0)
                     {
+                        Dialog.DialogEvent dialogEvent = dialog.dialogEvent;
+                        if (dialogEvent != null)
+                        {
+                            dialogEvent.Invoke(Dialog.DialogEventType.End);
+                        }
+                        dialog = null;
+                        break;
                     }
-                    dialog = null;
-                    break;
                 }
             }
+            typingindex = (typingindex > dialog.text.Length) ? dialog.text.Length : typingindex;
             dialogtext.text = dialog.text.Substring(0, typingindex);
             yield return null;
         }
@@ -111,6 +208,9 @@ public class DialogManager : Singleton<DialogManager>
 }
 public class Dialog
 {
+    [XmlAttribute("ID")]
+    public string id = "";
+
     [XmlElement("Text")]
     public string text = "none";
 
@@ -120,13 +220,26 @@ public class Dialog
     [XmlArray("ChooseList")]
     [XmlArrayItem("Choose")]
     public List<Choose> chooses = null;
+
+    [XmlIgnore]
+    public DialogEvent dialogEvent;
+
+    public delegate void DialogEvent(DialogEventType eventType);
+
+    public enum DialogEventType
+    {
+        Start,
+        End
+    }
 }
 
 public class Choose
 {
+
     [XmlAttribute("Text")]
     public string text;
 
     [XmlElement("Dialog")]
     public List<Dialog> dialogs = new List<Dialog>();
 }
+
