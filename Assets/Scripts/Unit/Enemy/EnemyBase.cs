@@ -12,6 +12,12 @@ public class EnemyBase : UnitBase
 
     protected SpriteRenderer _spriteRenderer;
     protected bool agro;
+
+    public bool Agro
+    {
+        get { return agro; }
+    }
+
     protected float hitui;
     protected float hitx;
     protected bool hitred = true;

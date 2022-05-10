@@ -43,6 +43,7 @@ public class Enemy_SwordSkel : EnemyBase
     {
         if (!attacking)
         {
+            animator.SetBool("isWalking", true);
             base.CheckMove(deltaTime);
         }
     }

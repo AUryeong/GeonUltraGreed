@@ -8,7 +8,7 @@ public class Map : MonoBehaviour
     public Vector2 minvector;
     public Vector2 maxvector;
     public List<ItemPos> itemPos;
-    public Vector3[] playerPos;
+    public Vector2[] playerPos;
 }
 public class ItemPos
 {

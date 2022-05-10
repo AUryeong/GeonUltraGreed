@@ -52,17 +52,65 @@ public class GameManager : Singleton<GameManager>
     [SerializeField]
     Image EW2item2;
 
+    [Header("UI - Esc")]
+    [SerializeField]
+    GameObject escui;
+    [SerializeField]
+    ClickableSlot extiorrun;
+    [SerializeField]
+    GameObject exitrealui;
+
     [Header("UI - ELSE")]
     [SerializeField]
     TextMeshPro boundtext;
+    [SerializeField]
+    TextMeshProUGUI centertext;
     [SerializeField]
     TextMeshProUGUI moneytext;
 
     public Map map;
     public List<CameraFilter_EarthQuake> cameraFilter_EarthQuakes = new List<CameraFilter_EarthQuake>();
     int Dashcount;
+    Coroutine centertextcoroutine;
     Player player;
 
+    public bool IsEscing()
+    {
+        return escui.activeSelf;
+    }
+    public void PressEsc()
+    {
+        escui.SetActive(!escui.activeSelf);
+        exitrealui.SetActive(false);
+    }
+    public void GameEnd()
+    {
+        exitrealui.SetActive(true);
+    }
+
+    public void ShowCenterText(string text, Color color,float duration = 1f)
+    {
+        centertext.gameObject.SetActive(true);
+        centertext.text = text;
+        centertext.color = color;
+        if (centertextcoroutine != null)
+            StopCoroutine(centertextcoroutine);
+
+        centertextcoroutine = StartCoroutine(removecentertext(duration));
+    }
+    IEnumerator removecentertext(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        centertext.gameObject.SetActive(false);
+    }
+    public void NoGameEnd()
+    {
+        exitrealui.SetActive(false);
+    }
+    public void RealGameEnd()
+    {
+        Application.Quit();
+    }
     public void EquipWeaponChange(int i = 0)
     {
         RectTransform obj1 = EW1;
@@ -148,6 +196,14 @@ public class GameManager : Singleton<GameManager>
     void UpdateUI()
     {
         moneytext.text = Player.Instance.Inven.money.ToString();
+        CheckEsc();
+    }
+    void CheckEsc()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameManager.Instance.PressEsc();
+        }
     }
     void CameraControl()
     {

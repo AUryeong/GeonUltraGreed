@@ -101,7 +101,7 @@ public class Player : UnitBase
     
     public bool IsActable()
     {
-        return !Inven.gameObject.activeSelf && !DialogManager.Instance.Dialoging();
+        return !Inven.gameObject.activeSelf && !DialogManager.Instance.Dialoging() && !GameManager.Instance.IsEscing();
     }
 
 
@@ -127,6 +127,11 @@ public class Player : UnitBase
             GameManager.Instance.CameraEarthQuake(0.3f, 0.165f, 0.131f);
             hurtinv = 0.7f;
             sprite.color = new Color(1, 1, 1, 0.7f);
+            if(Hp <= 0)
+            {
+                Player.instance.gameObject.SetActive(false);
+                Time.timeScale = 0;
+            }
             return true;
         }
         else
@@ -373,6 +378,7 @@ public class Player : UnitBase
             }
         }
     }
+   
     protected override void Update()
     {
         float time = Time.deltaTime;

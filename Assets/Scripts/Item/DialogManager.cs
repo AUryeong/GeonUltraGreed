@@ -20,6 +20,9 @@ public class DialogManager : Singleton<DialogManager>
     TextMeshProUGUI dialogtext;
 
     [SerializeField]
+    GameObject chooseui;
+
+    [SerializeField]
     GameObject chooseuibuttom;
 
     [SerializeField]
@@ -31,6 +34,7 @@ public class DialogManager : Singleton<DialogManager>
     List<GameObject> objlist = new List<GameObject>();
 
     Coroutine coroutine;
+    int index = -1;
 
     void Start()
     {
@@ -88,9 +92,10 @@ public class DialogManager : Singleton<DialogManager>
                 dialogname.text = dialog.name;
                 if (dialog.chooses != null && dialog.chooses.Count > 0)
                 {
+                    chooseui.SetActive(true);
                     chooseuibuttom.SetActive(true);
-                    chooseuibuttom.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[dialog.chooses.Count - 1].text;
                     chooseuibuttom.transform.GetChild(0).GetComponent<ChooseSlot>().slot = dialog.chooses.Count-1;
+                    chooseuibuttom.GetComponent<RectTransform>().GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[dialog.chooses.Count-1].text;
                     objlist.Add(chooseuibuttom);
                     if (dialog.chooses.Count > 2)
                     {
@@ -98,18 +103,20 @@ public class DialogManager : Singleton<DialogManager>
                         {
                             GameObject obj = PoolManager.Instance.Init(chooseuimiddle);
                             obj.SetActive(true);
-                            obj.GetComponent<RectTransform>().SetParent(chooseuibuttom.GetComponent<RectTransform>());
-                            obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 96 * (dialog.chooses.Count - i), 0);
+                            obj.GetComponent<RectTransform>().SetParent(chooseui.GetComponent<RectTransform>());
                             obj.GetComponent<RectTransform>().GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[i-1].text;
                             obj.GetComponent<RectTransform>().GetChild(0).GetComponent<ChooseSlot>().slot = i-1;
                             objlist.Add(obj);
                         }
                     }
                     chooseuiup.SetActive(true);
-                    chooseuiup.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 96 * (dialog.chooses.Count - 1), 0);
                     chooseuiup.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = dialog.chooses[0].text;
                     chooseuiup.transform.GetChild(0).GetComponent<ChooseSlot>().slot = 0;
                     objlist.Add(chooseuiup);
+                    if (index >= 0 && index < objlist.Count)
+                    {
+                        objlist[index].transform.GetChild(0).GetComponent<ChooseSlot>().OnPointerEnter(null);
+                    }
                 }
                 else
                 {
@@ -139,6 +146,7 @@ public class DialogManager : Singleton<DialogManager>
             {
                 obj.SetActive(false);
             }
+            this.index = objlist.Count - index - 1;
             objlist.Clear();
             Dialog.DialogEvent dialogEvent = dialog.dialogEvent;
             if (dialogEvent != null)
@@ -155,6 +163,7 @@ public class DialogManager : Singleton<DialogManager>
     {
         int typingindex = 0;
         float typingtime = 0;
+        
         while (true)
         {
             if (typingindex != dialog.text.Length)

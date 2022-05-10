@@ -6,10 +6,11 @@
 		<Stat MinDmg="8" MaxDmg="10" AttackSpeed="3.03" />
 	</Item>
 	<Item ID="HeaterShield">
-		<Name>히터 쉴드</Name>
-		<Lore>"세컨드 쉴드"</Lore>
+		<Name>히터 실드</Name>
+		<Lore>"길다란 방패를 짧게 개량한 방패"</Lore>
 		<Category>SubWeapon</Category>
-		<Stat Defense="20" Blocking="100" />
+		<Rank>Rare</Rank>
+		<Stat Defense="17" Blocking="5" Strong="2"/>
 	</Item>
 	<Item ID="Three-TieredBaton">
 		<Name>삼단봉</Name>

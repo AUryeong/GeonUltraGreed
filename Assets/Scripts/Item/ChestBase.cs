@@ -21,7 +21,8 @@ public class ChestBase : FButtonUnitBase
             GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropItem"));
             obj.GetComponent<DropItem>().ShowItem(item);
             obj.GetComponent<DropItem>().getitem = false;
-            obj.transform.position = transform.position;
+            obj.transform.SetParent(GameManager.Instance.map.transform);
+            obj.transform.position = transform.position + new Vector3(0, 0.1f, 0);
             obj.name = "DropItem_" + item.ItemText;
             obj.GetComponent<Rigidbody2D>().AddForce(Vector3.up * 400);
             int getmoney = money + Random.Range(0, randommoney + 1);

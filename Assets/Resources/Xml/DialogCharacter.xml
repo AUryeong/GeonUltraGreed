@@ -26,7 +26,7 @@
 								<Choose Text="적이요?">
 									<Dialog>
 										<Name>엔비록</Name>
-										<Text>원래 우리 종속이였던 자들이였지만, 마검... 아니 검성 라슬리의 힘에 의해 우릴 적대하게 됬다.</Text>
+										<Text>원래 우리 종속이였던 자들이였지만, 마검의 포로... 아니 검성 라슬리의 힘에 의해 우릴 적대하게 됬다.</Text>
 									</Dialog>
 									<Dialog>
 										<Name>엔비록</Name>
@@ -46,25 +46,29 @@
 									<Dialog ID="AcceptQuest">
 										<Name>엔비록</Name>
 										<Text>여기 있는 적을 모두 처치하고 다시 말을 걸어라, 우리의 계획에 대해 소개해주지.</Text>
+										<ChooseList>
+											<Choose Text="적이요?">
+												<Dialog>
+													<Name>엔비록</Name>
+													<Text>원래 우리 종속이였던 자들이였지만, 마검의 포로... 아니 검성 라슬리의 힘에 의해 우릴 적대하게 됬다.</Text>
+												</Dialog>
+												<Dialog>
+													<Name>엔비록</Name>
+													<Text>아무튼 적을 처치하고 와라, 다 처치하고 오면 우리의 계획에 대해 소개해 주지.</Text>
+												</Dialog>
+											</Choose>
+											<Choose Text="알겠습니다" />
+										</ChooseList>
 									</Dialog>
-									<ChooseList>
-										<Choose Text="적이요?">
-											<Dialog>
-												<Name>엔비록</Name>
-												<Text>원래 우리 종속이였던 자들이였지만, 마검... 아니 검성 라슬리의 힘에 의해 우릴 적대하게 됬다.</Text>
-											</Dialog>
-											<Dialog>
-												<Name>엔비록</Name>
-												<Text>아무튼 적을 처치하고 와라, 우리의 계획에 대해 소개해 주지</Text>
-											</Dialog>
-										</Choose>
-										<Choose Text="알겠습니다" />
-									</ChooseList>
 								</Choose>
 								<Choose Text="그렇다">
 									<Dialog ID="KillPlayer">
 										<Name>엔비록</Name>
 										<Text>아쉽게 됬군, 여기서 죽어줘야겠다.</Text>
+									</Dialog>
+									<Dialog>
+										<Name>엔비록</Name>
+										<Text>나쁘지 않은 재능을 가진자 였던거 같지만... 아쉽게 됬군</Text>
 									</Dialog>
 								</Choose>
 							</ChooseList>
@@ -83,6 +87,10 @@
 			<Dialog>
 				<Name>엔비록</Name>
 				<Text>잘 해냈군, 약속대로 계획을 설명하...기 전에 일단 장소를 옮기지.</Text>
+			</Dialog>
+			<Dialog>
+				<Name>누군가의 목소리</Name>
+				<Text>여기까지 구현함</Text>
 			</Dialog>
 		</DialogList>
 	</Character>

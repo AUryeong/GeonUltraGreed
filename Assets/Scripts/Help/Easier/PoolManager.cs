@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PoolManager : Singleton<PoolManager>
 {
+    [SerializeField]
+    Transform m_Pool;
     Dictionary<GameObject, List<GameObject>> pools = new Dictionary<GameObject, List<GameObject>>();
 
     public GameObject Init(GameObject obj, float hidetime = 0)
@@ -32,6 +34,7 @@ public class PoolManager : Singleton<PoolManager>
             copy = GameObject.Instantiate<GameObject>(obj);
             pools[obj].Add(copy);
             copy.SetActive(true);
+            copy.transform.SetParent(m_Pool);
             if (hidetime > 0)
             {
                 AudoDestruct destruct = copy.AddComponent<AudoDestruct>();

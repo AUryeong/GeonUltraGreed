@@ -66,7 +66,7 @@ public class PlayerInven : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.V) || Input.GetKeyDown(KeyCode.Escape))
         {
             gameObject.SetActive(false);
         }
