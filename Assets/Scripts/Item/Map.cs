@@ -7,13 +7,11 @@ public class Map : MonoBehaviour
 {
     public Vector2 minvector;
     public Vector2 maxvector;
-    public List<ItemPos> itemPos;
     public Vector2[] playerPos;
-}
-public class ItemPos
-{
-    public Vector3 position;
-    public Item item;
+    public List<ChestBase> ChestList;
+
+    [HideInInspector]
+    public DoorArrow[] doorArrows;
 }
 public enum DoorArrow
 {

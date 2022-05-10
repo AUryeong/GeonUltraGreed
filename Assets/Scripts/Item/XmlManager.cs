@@ -9,6 +9,7 @@ using System.IO;
 public class XmlManager : Singleton<XmlManager>
 {
     public List<Item> items = new List<Item>();
+    public Dictionary<Rank, List<Item>> rankitems = new Dictionary<Rank, List<Item>>();
     public Dictionary<string, List<DialogList>> dialogCharatcters = new Dictionary<string, List<DialogList>>();
     protected override void Awake()
     {
@@ -35,6 +36,14 @@ public class XmlManager : Singleton<XmlManager>
         }
     }
 
+    public List<Item> FindRankItems(Rank rank)
+    {
+        if(!rankitems.ContainsKey(rank) || rankitems[rank] == null || rankitems[rank].Count <= 0)
+        {
+            rankitems.Add(rank, items.FindAll((Item x) => x.rank == rank && x.ItemText != "ShortSword"));
+        }
+        return rankitems[rank];
+    }
     public Item FindItem(string itemname)
     {
         return items.Find((Item x) => x.ItemText == itemname);

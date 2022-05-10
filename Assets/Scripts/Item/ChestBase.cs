@@ -12,12 +12,24 @@ public class ChestBase : FButtonUnitBase
     int randommoney;
     protected bool open = false;
     public Item item;
+
+    [SerializeField]
+    List<Rank> ranks = new List<Rank>();
     public override void OnF()
     {
         if (!open)
         {
             open = true;
             GetComponent<SpriteRenderer>().sprite = opensprite;
+            List<Item> itemlist = new List<Item>();
+            foreach(Rank rank in ranks)
+            {
+                itemlist.AddRange(XmlManager.Instance.FindRankItems(rank));
+            }
+            if(itemlist.Count > 0)
+            {
+                item = RandomUtil.SelectOne(itemlist);
+            }
             GameObject obj = PoolManager.Instance.Init(Resources.Load<GameObject>("DropItem/DropItem"));
             obj.GetComponent<DropItem>().ShowItem(item);
             obj.GetComponent<DropItem>().getitem = false;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 using UnityEngine.Tilemaps;
 
 public class Player : UnitBase
@@ -130,7 +131,6 @@ public class Player : UnitBase
             if(Hp <= 0)
             {
                 Player.instance.gameObject.SetActive(false);
-                Time.timeScale = 0;
             }
             return true;
         }
