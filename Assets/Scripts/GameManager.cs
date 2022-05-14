@@ -205,6 +205,38 @@ public class GameManager : Singleton<GameManager>
             GameManager.Instance.PressEsc();
         }
     }
+    public void EnterMap(DoorArrow doorArrow)
+    {
+        if(map != null)
+        {
+            Map gomap = map.maps[(int)doorArrow];
+            if(gomap != null)
+            {
+                map.gameObject.SetActive(false);
+                map = gomap;
+                map.gameObject.SetActive(true);
+                DoorArrow door;
+                switch(doorArrow)
+                {
+                    case DoorArrow.Left:
+                        door = DoorArrow.Right;
+                        break;
+                    case DoorArrow.Right:
+                        door = DoorArrow.Left;
+                        break;
+                    case DoorArrow.Up:
+                        door = DoorArrow.Down;
+                        break;
+                    case DoorArrow.Down:
+                        door = DoorArrow.Up;
+                        break;
+                    default:
+                        return;
+                }
+                Player.Instance.transform.position = map.transform.position + new Vector3(map.playerPos[(int)door].x, map.playerPos[(int)door].y);
+            }
+        }
+    }
     void CameraControl()
     {
         Vector3 shake = Vector3.zero;
@@ -231,21 +263,21 @@ public class GameManager : Singleton<GameManager>
         }
         Vector3 vector = Player.Instance.transform.position;
         Vector3 pos = vector;
-        if(vector.x > map.maxvector.x)
+        if (vector.x > map.maxvector.x + map.transform.position.x)
         {
-            pos.x = map.maxvector.x;
+            pos.x = map.maxvector.x + map.transform.position.x;
         }
-        else if (vector.x < map.minvector.x)
+        else if (vector.x < map.minvector.x + map.transform.position.x)
         {
-            pos.x = map.minvector.x;
+            pos.x = map.minvector.x + map.transform.position.x;
         }
-        if (vector.y > map.maxvector.y)
+        if (vector.y > map.maxvector.y + map.transform.position.y)
         {
-            pos.y = map.maxvector.y;
+            pos.y = map.maxvector.y + map.transform.position.y;
         }
-        else if (vector.y < map.minvector.y)
+        else if (vector.y < map.minvector.y + map.transform.position.y)
         {
-            pos.y = map.minvector.y;
+            pos.y = map.minvector.y + map.transform.position.y;
         }
         Camera.main.transform.position = pos + new Vector3(0,0,-10) + shake;
     }

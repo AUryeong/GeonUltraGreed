@@ -12,6 +12,8 @@ public class Map : MonoBehaviour
 
     [HideInInspector]
     public DoorArrow[] doorArrows;
+
+    public Map[] maps;
 }
 public enum DoorArrow
 {

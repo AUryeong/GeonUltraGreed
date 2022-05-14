@@ -229,12 +229,7 @@ public class PlayerInven : MonoBehaviour
                 copies.category = ItemSlot.Category.Accessory;
             }
         }
-        Item item2 = XmlManager.Instance.FindItem("Three-TieredBaton").Copy();
-        item2.AddStat.Add(new StatBonus() { Crit = 5, Power = 25 });
         AddItem(XmlManager.Instance.FindItem("ShortSword").Copy());
-        GameObject.Find("DropItem_ChainArmor").GetComponent<DropItem>().item = XmlManager.Instance.FindItem("ChainArmor").Copy();
-        GameObject.Find("BasicTreasure").GetComponent<ChestBase>().item = XmlManager.Instance.FindItem("HeaterShield").Copy();
-        GameObject.Find("BlueTreasure").GetComponent<ChestBase>().item = item2;
     }
 
     public enum Hand
